@@ -8,6 +8,8 @@ class Simulation {
         this.height = 64;
         this.terrain = [];
         this.generateTerrain();
+
+        this.hasMinimapChanged = true;
     }
 
     generateTerrain() {
@@ -26,6 +28,8 @@ class Simulation {
 
     update() {
         this.timer++;
+
+        //this.hasMinimapChanged = false;
     }
 }
 class Tile {
