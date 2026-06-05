@@ -9,16 +9,14 @@ class MainView {
         this.c.height = 200;
 
         this.sqSize = 16;
-        this.viewWidth = 16;
-        this.viewHeight = 11;
 
         this.viewOffsetX = 0;
         this.viewOffsetY = this.sqSize;
 
-        this.minimapOffsetX = this.sqSize*this.viewWidth;
+        this.minimapOffsetX = this.sqSize*this.targetControl.camera.width;
         this.minimapOffsetY = this.sqSize;
         this.minimap = new Minimap(this.targetSimulation, 
-            this.targetControl, this);
+            this.targetControl);
 
         this.tilesImage = new Image();
         this.tilesImage.src = "Resources/Images/Tiles.png";
@@ -41,13 +39,13 @@ class MainView {
         let sim = this.targetSimulation;
         let ctrl = this.targetControl;
 
-        for (let i=0; i<this.viewWidth; i++) {
-            for (let j=0; j<this.viewHeight; j++) {
+        for (let i=0; i<ctrl.camera.width; i++) {
+            for (let j=0; j<ctrl.camera.height; j++) {
                 let x = i*this.sqSize+this.viewOffsetX;
                 let y = j*this.sqSize+this.viewOffsetY;
 
-                let nx = i + ctrl.cameraX;
-                let ny = j + ctrl.cameraY;
+                let nx = i + ctrl.camera.x;
+                let ny = j + ctrl.camera.y;
                 let t = sim.terrain[nx][ny];
                 this.drawTile(x,y,t.type); 
 

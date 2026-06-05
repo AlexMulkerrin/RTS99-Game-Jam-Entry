@@ -25,6 +25,13 @@ class Simulation {
             }
         }
     }
+    isInBounds(x,y) {
+        if (x>=0 && x<this.width && y>=0 && y<this.height) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     update() {
         this.timer++;

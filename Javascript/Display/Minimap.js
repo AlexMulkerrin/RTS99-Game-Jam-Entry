@@ -5,10 +5,9 @@ const minimapColourID = {
 }
 
 class Minimap {
-    constructor(inSimulation, inControl, inMainView) {
+    constructor(inSimulation, inControl) {
         this.targetSimulation = inSimulation;
         this.targetControl = inControl;
-        this.targetMainView = inMainView;
 
         this.c = document.createElement("canvas");
         this.ctx = this.c.getContext("2d");
@@ -49,11 +48,11 @@ class Minimap {
     }
 
     drawCameraBoundaries() {
-        let ctrl = this.targetControl;
-        let x = ctrl.cameraX;
-        let y = ctrl.cameraY;
-        let w = this.targetMainView.viewWidth;
-        let h = this.targetMainView.viewHeight;
+        let cam = this.targetControl.camera;
+        let x = cam.x;
+        let y = cam.y;
+        let w = cam.width;
+        let h = cam.height;
 
         this.ctx.fillStyle = minimapColourID.cameraBorder;
 
