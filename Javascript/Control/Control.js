@@ -21,19 +21,18 @@ class Control {
     handleMouseMove(event) {
         let m = this.mouse;
 
-        m.x = event.layerX;
-        m.y = event.layerY;
-
         //let sim = this.targetSimulation;
         let disp = this.targetDisplay;
         let view = disp.mainView;
         let cam = this.camera;
 
-        let adjX = Math.floor(m.x/disp.scale);
-        let adjY = Math.floor(m.y/disp.scale);
+        m.x = Math.floor(event.layerX/disp.scale);
+        m.y = Math.floor(event.layerY/disp.scale);
+        //let adjX = Math.floor(m.x/disp.scale);
+        //let adjY = Math.floor(m.y/disp.scale);
 
-        let gx = Math.floor((adjX - view.viewOffsetX) / view.sqSize);
-        let gy = Math.floor((adjY - view.viewOffsetY) / view.sqSize);
+        let gx = Math.floor((m.x - view.viewOffsetX) / view.sqSize);
+        let gy = Math.floor((m.y - view.viewOffsetY) / view.sqSize);
 
         if (gx>=0 && gx<cam.width && gy>=0 
             && gy<cam.height) {
@@ -44,8 +43,8 @@ class Control {
             m.isOverGrid = false;
         }
 
-        m.miniX = adjX - view.minimapOffsetX;
-        m.miniY = adjY - view.minimapOffsetY;
+        m.miniX = m.x - view.minimapOffsetX;
+        m.miniY = m.y - view.minimapOffsetY;
 
         if (m.miniX>=0 && m.miniX<64 && m.miniY>=0 && m.miniY<64) {
             m.isOverMinimap = true;

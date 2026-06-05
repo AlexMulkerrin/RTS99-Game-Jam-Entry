@@ -20,6 +20,9 @@ class MainView {
 
         this.tilesImage = new Image();
         this.tilesImage.src = "Resources/Images/Tiles.png";
+
+        this.cursorsImage = new Image();
+        this.cursorsImage.src = "Resources/Images/Cursors.png";
     }
 
     refresh() {
@@ -32,6 +35,8 @@ class MainView {
             this.minimap.refresh();
         }
         this.drawMinimap(); 
+
+        this.drawCursor();
 
     }
 
@@ -72,5 +77,10 @@ class MainView {
             0,0,64,64,
             x,y, 64, 64);
 
+    }
+
+    drawCursor() {
+        let m = this.targetControl.mouse;
+        this.ctx.drawImage(this.cursorsImage,m.x,m.y);
     }
 }
