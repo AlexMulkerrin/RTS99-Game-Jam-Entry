@@ -12,6 +12,7 @@ class Control {
         let t = this;
 
         window.addEventListener("mousemove", function(e){t.handleMouseMove(e)});
+        window.addEventListener("mousedown", function(e){t.handleMouseDown(e)});
 
         window.addEventListener("keydown", function(e){t.handleKeyDown(e)})
     }
@@ -22,7 +23,7 @@ class Control {
         m.x = event.layerX;
         m.y = event.layerY;
 
-        let sim = this.targetSimulation;
+        //let sim = this.targetSimulation;
         let disp = this.targetDisplay;
         let view = disp.mainView;
         let cam = this.camera;
@@ -48,8 +49,16 @@ class Control {
         } else {
             m.isOverMinimap = false;
         }
+    }
 
+    handleMouseDown(event) {
+        let m = this.mouse;
 
+        m.whichButton = event.which;
+
+        if (m.isOverMinimap) {
+            this.centerCamera(m.miniX,m.miniY);
+        }
     }
 
     handleKeyDown(event) {
@@ -85,12 +94,33 @@ class Control {
             cam.y = ny;
         }
     }
+
+    centerCamera(x,y) {
+        let sim = this.targetSimulation;
+        let cam = this.camera;
+
+        let hx = Math.floor(cam.width/2);
+        let hy = Math.floor(cam.height/2);
+
+        let nx = x - hx;
+        let ny = y - hy;
+
+        if (nx<0) nx = 0;
+        if (nx+cam.width >= sim.width) nx = sim.width-cam.width;
+
+        if (ny<0) ny = 0;
+        if (ny+cam.height >= sim.height) ny = sim.height-cam.height;
+
+        cam.x = nx;
+        cam.y = ny;
+    }
 }
 
 class Mouse {
     constructor() {
         this.x = -100;
         this.y = -100;
+        this.whichButton = NONE;
 
         this.isOverGrid = false;
         this.gridX = 0;
