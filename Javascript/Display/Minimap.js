@@ -1,5 +1,5 @@
 const minimapColourID = {
-    water:"#334EAF", grass:"#29991D",
+    water:"#334EAF", grass:"#29991D", concrete:"#cccccc",
 
     cameraBorder:"#ffffff",
 }
@@ -35,6 +35,9 @@ class Minimap {
                         break;
                     case tileID.grass:
                         colour = minimapColourID.grass;
+                        break;
+                    case tileID.concrete:
+                        colour = minimapColourID.concrete;
                         break;
                     default:
                         colour = "#ff00ff";

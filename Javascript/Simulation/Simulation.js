@@ -1,4 +1,4 @@
-const tileID = {water:0, grass:1, dirt:2};
+const tileID = {water:0, grass:1, concrete:2};
 
 class Simulation {
     constructor() {
@@ -31,6 +31,10 @@ class Simulation {
         } else {
             return false;
         }
+    }
+
+    changeTile(x,y,type) {
+        this.terrain[x][y].type = type;
     }
 
     update() {

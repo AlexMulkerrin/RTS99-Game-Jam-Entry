@@ -13,6 +13,7 @@ class Control {
 
         window.addEventListener("mousemove", function(e){t.handleMouseMove(e)});
         window.addEventListener("mousedown", function(e){t.handleMouseDown(e)});
+        window.addEventListener("mouseup", function(e){t.handleMouseUp(e)});
 
         window.addEventListener("keydown", function(e){t.handleKeyDown(e)})
     }
@@ -31,12 +32,14 @@ class Control {
         let adjX = Math.floor(m.x/disp.scale);
         let adjY = Math.floor(m.y/disp.scale);
 
-        m.gridX  = Math.floor((adjX - view.viewOffsetX) / view.sqSize);
-        m.gridY  = Math.floor((adjY - view.viewOffsetY) / view.sqSize);
+        let gx = Math.floor((adjX - view.viewOffsetX) / view.sqSize);
+        let gy = Math.floor((adjY - view.viewOffsetY) / view.sqSize);
 
-        if (m.gridX>=0 && m.gridX<cam.width && m.gridY>=0 
-            && m.gridY<cam.height) {
+        if (gx>=0 && gx<cam.width && gy>=0 
+            && gy<cam.height) {
             m.isOverGrid = true;
+            m.gridX = gx + cam.x;
+            m.gridY = gy + cam.y;
         } else {
             m.isOverGrid = false;
         }
@@ -50,7 +53,6 @@ class Control {
             m.isOverMinimap = false;
         }
     }
-
     handleMouseDown(event) {
         let m = this.mouse;
 
@@ -60,6 +62,15 @@ class Control {
             this.centerCamera(m.miniX,m.miniY);
         }
     }
+    handleMouseUp(event) {
+        let sim = this.targetSimulation;
+        let m = this.mouse;
+
+        if (m.isOverGrid) {
+            sim.changeTile(m.gridX, m.gridY, tileID.concrete);
+        }
+    }
+
 
     handleKeyDown(event) {
         let code = event.code;
