@@ -10,6 +10,8 @@ class Program{
         this.control = new Control(this.simulation);
         this.display = new Display(this.simulation, this.control);
 
+        this.control.targetDisplay = this.display;
+
         this.update();
     }
 

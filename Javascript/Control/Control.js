@@ -1,6 +1,9 @@
 class Control {
     constructor(inSimulation) {
         this.targetSimulation = inSimulation;
+        this.targetDisplay = {};
+
+        this.mouse = new Mouse();
 
         this.camera = new Camera();
         this.camera.x = 5;
@@ -8,7 +11,45 @@ class Control {
 
         let t = this;
 
+        window.addEventListener("mousemove", function(e){t.handleMouseMove(e)});
+
         window.addEventListener("keydown", function(e){t.handleKeyDown(e)})
+    }
+
+    handleMouseMove(event) {
+        let m = this.mouse;
+
+        m.x = event.layerX;
+        m.y = event.layerY;
+
+        let sim = this.targetSimulation;
+        let disp = this.targetDisplay;
+        let view = disp.mainView;
+        let cam = this.camera;
+
+        let adjX = Math.floor(m.x/disp.scale);
+        let adjY = Math.floor(m.y/disp.scale);
+
+        m.gridX  = Math.floor((adjX - view.viewOffsetX) / view.sqSize);
+        m.gridY  = Math.floor((adjY - view.viewOffsetY) / view.sqSize);
+
+        if (m.gridX>=0 && m.gridX<cam.width && m.gridY>=0 
+            && m.gridY<cam.height) {
+            m.isOverGrid = true;
+        } else {
+            m.isOverGrid = false;
+        }
+
+        m.miniX = adjX - view.minimapOffsetX;
+        m.miniY = adjY - view.minimapOffsetY;
+
+        if (m.miniX>=0 && m.miniX<64 && m.miniY>=0 && m.miniY<64) {
+            m.isOverMinimap = true;
+        } else {
+            m.isOverMinimap = false;
+        }
+
+
     }
 
     handleKeyDown(event) {
@@ -43,6 +84,21 @@ class Control {
             cam.x = nx;
             cam.y = ny;
         }
+    }
+}
+
+class Mouse {
+    constructor() {
+        this.x = -100;
+        this.y = -100;
+
+        this.isOverGrid = false;
+        this.gridX = 0;
+        this.gridY = 0;
+
+        this.isOverMinimap = false;
+        this.miniX = 0;
+        this.miniY = 0;
     }
 }
 

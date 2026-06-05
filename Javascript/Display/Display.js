@@ -32,9 +32,13 @@ class Display {
 
     drawDebug() {
         let sim = this.targetSimulation;
+        let m = this.targetControl.mouse;
+        let offY = this.scale*200;
 
         this.ctx.font = "16px sans-serif";
         this.ctx.fillStyle = "#9999dd"
-        this.ctx.fillText(Math.floor(sim.timer/60)+"s",10,this.scale*200+20);
+        this.ctx.fillText(Math.floor(sim.timer/60)+"s",10,offY+20);
+
+        this.ctx.fillText(m.isOverGrid+","+m.isOverMinimap,10,offY+40);
     }
 }
