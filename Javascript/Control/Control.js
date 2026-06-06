@@ -109,6 +109,8 @@ class Control {
                         sim.tryPlaceStructure(m.gridX, m.gridY,structureID.silo);
                     case toolID.medium:
                         sim.tryPlaceStructure(m.gridX, m.gridY,structureID.barracks);
+                    case toolID.large:
+                        sim.tryPlaceStructure(m.gridX, m.gridY,structureID.portal);
                         
                         break;
                 }

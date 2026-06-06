@@ -27,6 +27,9 @@ class MainView {
         this.mediumStructuresImage = new Image();
         this.mediumStructuresImage.src = "Resources/Images/Medium Structures.png";
 
+        this.largeStructuresImage = new Image();
+        this.largeStructuresImage.src = "Resources/Images/Large Structures.png";
+
         this.cursorsImage = new Image();
         this.cursorsImage.src = "Resources/Images/Cursors.png";
     }
@@ -44,8 +47,6 @@ class MainView {
         this.drawMinimap(); 
 
         this.drawCursor();
-
-
     }
 
     drawTerrain() {
@@ -110,6 +111,11 @@ class MainView {
         } else if (size == 2) {
             sqSize = sqSize*2;
             this.ctx.drawImage(this.mediumStructuresImage, 
+                tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
+                x, y, sqSize, sqSize);
+        } else if (size == 3) {
+            sqSize = sqSize*3;
+            this.ctx.drawImage(this.largeStructuresImage, 
                 tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
                 x, y, sqSize, sqSize);
         }
