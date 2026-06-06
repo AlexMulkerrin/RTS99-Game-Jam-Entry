@@ -1,3 +1,7 @@
+const colourID = {
+    hovered:"#d1d1fe", selected:"#00ff00"
+};
+
 class MainView {
     constructor(inSimulation, inControl) {
         this.targetSimulation = inSimulation;
@@ -139,8 +143,8 @@ class MainView {
                 let vy = a.y - cam.y;
 
                 if (cam.isInBounds(vx,vy)) {
-                    let x = vx*this.sqSize+this.viewOffsetX;
-                    let y = vy*this.sqSize+this.viewOffsetY;
+                    let x = vx*this.sqSize + this.viewOffsetX;
+                    let y = vy*this.sqSize + this.viewOffsetY;
 
                     this.drawAgent(x,y,a.type, a.rotation);
                 }   
@@ -168,7 +172,46 @@ class MainView {
     }
 
     drawCursor() {
+        let sim = this.targetSimulation;
         let m = this.targetControl.mouse;
         this.ctx.drawImage(this.cursorsImage,m.x,m.y);
+
+        
+        if (m.hoveredType == entityTypeID.structure) {
+            let s = sim.structure[m.hoveredIndex];
+            this.drawBoundingBox(s.x,s.y,s.size,colourID.hovered);
+
+        } else if (m.hoveredType == entityTypeID.agent) {
+            let a = sim.agent[m.hoveredIndex];
+            this.drawBoundingBox(a.x,a.y,1,colourID.hovered);
+        }
+
+        if (m.selectedType == entityTypeID.structure) {
+            let s = sim.structure[m.selectedIndex];
+            this.drawBoundingBox(s.x,s.y,s.size,colourID.selected);
+
+        } else if (m.selectedType == entityTypeID.agent) {
+            let a = sim.agent[m.selectedIndex];
+            this.drawBoundingBox(a.x,a.y,1,colourID.selected);
+        }
+    }
+
+    drawBoundingBox(x,y,size,colour) {
+        let cam = this.targetControl.camera;
+        let vx = x - cam.x;
+        let vy = y - cam.y;
+
+        let nx = vx*this.sqSize + this.viewOffsetX;
+        let ny = vy*this.sqSize + this.viewOffsetY;
+        let w = size*this.sqSize;
+        let h = size*this.sqSize;
+
+        this.ctx.fillStyle = colour
+
+        this.ctx.fillRect(nx,ny,w,1);
+        this.ctx.fillRect(nx,ny,1,h);
+
+        this.ctx.fillRect(nx,ny+h-1,w,1);
+        this.ctx.fillRect(nx+w-1,ny,1,h);
     }
 }

@@ -1,5 +1,7 @@
 const mouseButtonID = {left:1, middle:2, right:3};
 
+const entityTypeID = {none:0, structure:1, agent:2};
+
 const toolID = {concrete:0, road:1, wall:2, small:3, medium:4, large:5, removeStructure:6, robot:7, rover:8};
 const tools = ["concrete","road","wall","1x1 building","2x2 building","3x3 building","remove structure","add robot", "add rover"];
 
@@ -52,6 +54,9 @@ class Control {
             m.isOverGrid = true;
             m.gridX = gx + cam.x;
             m.gridY = gy + cam.y;
+
+            this.checkHover();
+
         } else {
             m.isOverGrid = false;
         }
@@ -87,43 +92,22 @@ class Control {
         }
     }
     handleMouseUp(event) {
-        let sim = this.targetSimulation;
         let m = this.mouse;
-
-        
 
         if (m.isOverGrid) {
             if (m.whichButton == mouseButtonID.left) {
 
-                switch(this.currentTool) {
-                    case toolID.concrete:
-                        sim.changeTile(m.gridX, m.gridY, tileID.concrete);
-                        break;
-                    case toolID.road:
-                        sim.changeTile(m.gridX, m.gridY, tileID.road);
-                        break;
-                    case toolID.wall:
-                        sim.tryPlaceStructure(m.gridX, m.gridY,structureID.wall);
-                        break;
-                    case toolID.small:
-                        sim.tryPlaceStructure(m.gridX, m.gridY,structureID.silo);
-                        break;
-                    case toolID.medium:
-                        sim.tryPlaceStructure(m.gridX, m.gridY,structureID.barracks);
-                        break;
-                    case toolID.large:
-                        sim.tryPlaceStructure(m.gridX, m.gridY,structureID.portal);
-                        break;
-                    case toolID.removeStructure:
-                        sim.tryRemoveStructure(m.gridX, m.gridY);
-                        break;
-                    case toolID.robot:
-                        sim.tryAddAgent(m.gridX,m.gridY, agentID.robot);
-                        break;
-                    case toolID.rover:
-                        sim.tryAddAgent(m.gridX,m.gridY, agentID.rover);
-                        break;
+                if (m.hoveredType == entityTypeID.structure) {
+                    m.selectedType = entityTypeID.structure;
+                    m.selectedIndex = m.hoveredIndex;
+                } else if (m.hoveredType == entityTypeID.agent) {
+                    m.selectedType = entityTypeID.agent;
+                    m.selectedIndex = m.hoveredIndex;
+                } else {
+                    this.handleToolUse();
                 }
+
+                
                 
             } else if (m.whichButton == mouseButtonID.left) {
 
@@ -167,6 +151,58 @@ class Control {
                 break;
             
         }
+    }
+
+    handleToolUse() {
+        let sim = this.targetSimulation;
+        let m = this.mouse;
+
+        switch(this.currentTool) {
+            case toolID.concrete:
+                sim.changeTile(m.gridX, m.gridY, tileID.concrete);
+                break;
+            case toolID.road:
+                sim.changeTile(m.gridX, m.gridY, tileID.road);
+                break;
+            case toolID.wall:
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.wall);
+                break;
+            case toolID.small:
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.silo);
+                break;
+            case toolID.medium:
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.barracks);
+                break;
+            case toolID.large:
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.portal);
+                break;
+            case toolID.removeStructure:
+                sim.tryRemoveStructure(m.gridX, m.gridY);
+                break;
+            case toolID.robot:
+                sim.tryAddAgent(m.gridX,m.gridY, agentID.robot);
+                break;
+            case toolID.rover:
+                sim.tryAddAgent(m.gridX,m.gridY, agentID.rover);
+                break;
+        }
+    }
+
+    checkHover() {
+        let sim = this.targetSimulation;
+        let m = this.mouse;
+
+        let t = sim.terrain[m.gridX][m.gridY];
+
+        m.hoveredType = entityTypeID.none;
+
+        if (t.hasStructure) {
+            m.hoveredType = entityTypeID.structure;
+            m.hoveredIndex = t.occupant;
+        } else if (t.hasAgent) {
+            m.hoveredType = entityTypeID.agent;
+            m.hoveredIndex = t.occupant;
+        } 
     }
 
     moveCamera(dx,dy) {
@@ -261,6 +297,12 @@ class Mouse {
         this.isOverGrid = false;
         this.gridX = 0;
         this.gridY = 0;
+
+        this.hoveredType = entityTypeID.none;
+        this.hoveredIndex = NONE;
+
+        this.selectedType = entityTypeID.none;
+        this.selectedIndex = NONE;
 
         this.isOverMinimap = false;
         this.miniX = 0;
