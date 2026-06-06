@@ -9,6 +9,8 @@ class Simulation {
         this.terrain = [];
         this.generateTerrain();
 
+        this.structure = [];
+
         this.hasMinimapChanged = true;
     }
 
@@ -37,6 +39,19 @@ class Simulation {
         this.terrain[x][y].type = type;
     }
 
+    placeStructure(x,y,type) {
+        let struc = new Structure(x,y,type);
+
+        let t = this.terrain[x][y];
+        if (t.hasStructure == false) {
+            
+            t.hasStructure = true;
+            t.occupant = this.structure.length;
+
+            this.structure.push(struc);
+        }
+    }
+
     update() {
         this.timer++;
 
@@ -46,5 +61,8 @@ class Simulation {
 class Tile {
     constructor() {
         this.type = tileID.grass;
+
+        this.hasStructure = false;
+        this.occupant = NONE;
     }
 }

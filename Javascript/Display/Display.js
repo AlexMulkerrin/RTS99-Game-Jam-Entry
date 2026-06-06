@@ -42,5 +42,7 @@ class Display {
         this.ctx.fillText(m.isOverGrid+","+m.isOverMinimap,10,offY+40);
 
         this.ctx.fillText(m.oldX+","+m.oldY,10,offY+60);
+
+        this.ctx.fillText(tools[this.targetControl.currentTool],10,offY+80);
     }
 }

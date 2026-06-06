@@ -1,11 +1,17 @@
 const mouseButtonID = {left:1, middle:2, right:3};
 
+const toolID = {road:0, wall:1, small:2, medium:3, large:4, remove:5};
+const tools = ["road","wall","1x1 building","2x2 building","3x3 building","remove"];
+
 class Control {
     constructor(inSimulation) {
         this.targetSimulation = inSimulation;
         this.targetDisplay = {};
 
+        this.c = document.getElementById("displayCanvas")
+
         this.mouse = new Mouse();
+        this.currentTool = 0; //  road
 
         this.camera = new Camera();
         this.camera.x = 5;
@@ -16,6 +22,11 @@ class Control {
         window.addEventListener("mousemove", function(e){t.handleMouseMove(e)});
         window.addEventListener("mousedown", function(e){t.handleMouseDown(e)});
         window.addEventListener("mouseup", function(e){t.handleMouseUp(e)});
+
+        // disable right click menu on canvas
+        this.c.addEventListener("contextmenu", function(e){e.preventDefault()});
+
+        this.c.addEventListener("wheel", function(e){t.handleMouseWheel(e); return false;});
 
         window.addEventListener("keydown", function(e){t.handleKeyDown(e)})
     }
@@ -83,7 +94,16 @@ class Control {
 
         if (m.isOverGrid) {
             if (m.whichButton == mouseButtonID.left) {
-                sim.changeTile(m.gridX, m.gridY, tileID.concrete);
+
+                switch(this.currentTool) {
+                    case toolID.road:
+                        sim.changeTile(m.gridX, m.gridY, tileID.concrete);
+                        break;
+                    case toolID.wall:
+                        sim.placeStructure(m.gridX, m.gridY,structureID.wall);
+                        break;
+                }
+                
             } else if (m.whichButton == mouseButtonID.left) {
 
             }
@@ -92,6 +112,21 @@ class Control {
         m.whichButton = NONE;
     }
 
+    handleMouseWheel(event) {
+        let delta = event.deltaY;
+
+        if (delta>0) {
+            this.currentTool++;
+            if (this.currentTool>=tools.length) {
+                this.currentTool = tools.length-1;
+            } 
+        } else {
+            this.currentTool--;
+            if (this.currentTool<0) {
+                this.currentTool = 0;
+            }
+        }
+    }
 
     handleKeyDown(event) {
         let code = event.code;
@@ -220,5 +255,13 @@ class Camera {
         this.height = 11;
 
         this.panDelay = 0;
+    }
+
+    isInBounds(x,y) {
+        if (x>=0 && x<this.width && y>=0 && y<this.height) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

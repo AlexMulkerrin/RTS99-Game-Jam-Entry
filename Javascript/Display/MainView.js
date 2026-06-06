@@ -21,6 +21,9 @@ class MainView {
         this.tilesImage = new Image();
         this.tilesImage.src = "Resources/Images/Tiles.png";
 
+        this.structuresImage = new Image();
+        this.structuresImage.src = "Resources/Images/Structures.png";
+
         this.cursorsImage = new Image();
         this.cursorsImage.src = "Resources/Images/Cursors.png";
     }
@@ -29,7 +32,8 @@ class MainView {
         this.ctx.fillStyle = "#eeeeff";
         this.ctx.fillRect(0,0,this.c.width, this.c.height);
 
-        this.drawTerrain(); 
+        this.drawTerrain();
+        this.drawStructures(); 
 
         if (this.targetSimulation.hasMinimapChanged) {
             this.minimap.refresh();
@@ -37,6 +41,8 @@ class MainView {
         this.drawMinimap(); 
 
         this.drawCursor();
+
+        this.drawStructure(0,0,0);
 
     }
 
@@ -57,7 +63,6 @@ class MainView {
 
             }
         }
-        
     }
     drawTile(x,y,ID) {
         let sqSize = this.sqSize;
@@ -66,6 +71,37 @@ class MainView {
         let ty = 0;
         
         this.ctx.drawImage(this.tilesImage, 
+            tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
+            x, y, sqSize, sqSize);
+    }
+
+    drawStructures() {
+        let sim = this.targetSimulation;
+        let cam = this.targetControl.camera;
+
+        for (let i=0; i<sim.structure.length; i++) {
+            let s = sim.structure[i];
+
+            let vx = s.x - cam.x;
+            let vy = s.y - cam.y;
+
+            if (cam.isInBounds(vx,vy)) {
+                let x = vx*this.sqSize+this.viewOffsetX;
+                let y = vy*this.sqSize+this.viewOffsetY;
+
+                this.drawStructure(x,y,s.type);
+            }
+            
+            //this.drawStructure(vx,vy,s.type);
+        }
+    }
+    drawStructure(x,y,ID) {
+        let sqSize = this.sqSize;
+
+        let tx = ID;
+        let ty = 0;
+        
+        this.ctx.drawImage(this.structuresImage, 
             tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
             x, y, sqSize, sqSize);
     }
