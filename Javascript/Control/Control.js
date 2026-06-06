@@ -1,3 +1,5 @@
+const mouseButtonID = {left:1, middle:2, right:3};
+
 class Control {
     constructor(inSimulation) {
         this.targetSimulation = inSimulation;
@@ -43,13 +45,22 @@ class Control {
             m.isOverGrid = false;
         }
 
+        
+
         m.miniX = m.x - view.minimapOffsetX;
         m.miniY = m.y - view.minimapOffsetY;
 
         if (m.miniX>=0 && m.miniX<64 && m.miniY>=0 && m.miniY<64) {
             m.isOverMinimap = true;
+            
         } else {
             m.isOverMinimap = false;
+        }
+
+        if (m.isOverMinimap) {
+            if (m.whichButton == mouseButtonID.left) {
+                this.centerCamera(m.miniX,m.miniY);
+            }
         }
     }
     handleMouseDown(event) {
@@ -57,7 +68,10 @@ class Control {
 
         m.whichButton = event.which;
 
-        if (m.isOverMinimap) {
+        m.oldX = m.x;
+        m.oldY = m.y;        
+
+        if (m.whichButton == mouseButtonID.left && m.isOverMinimap) {
             this.centerCamera(m.miniX,m.miniY);
         }
     }
@@ -65,9 +79,17 @@ class Control {
         let sim = this.targetSimulation;
         let m = this.mouse;
 
+        
+
         if (m.isOverGrid) {
-            sim.changeTile(m.gridX, m.gridY, tileID.concrete);
+            if (m.whichButton == mouseButtonID.left) {
+                sim.changeTile(m.gridX, m.gridY, tileID.concrete);
+            } else if (m.whichButton == mouseButtonID.left) {
+
+            }
         }
+
+        m.whichButton = NONE;
     }
 
 
@@ -124,6 +146,51 @@ class Control {
         cam.x = nx;
         cam.y = ny;
     }
+
+    panCamera() {
+        let m = this.mouse;
+        let cam = this.camera;
+
+        let threshold = 16;
+        let delay = 3;
+
+        let dx = m.oldX - m.x;
+        let dy = m.oldY - m.y;
+
+        if (dx>threshold) {
+            this.moveCamera(-1,0);
+            cam.panDelay = delay;
+        } else if (dx < -threshold) {
+            this.moveCamera(1,0);
+            cam.panDelay = delay;
+        }
+
+        if (dy>threshold) {
+            this.moveCamera(0,-1);
+            cam.panDelay = delay;
+        } else if (dy < -threshold) {
+            this.moveCamera(0,1);
+            cam.panDelay = delay;
+        }
+    }
+
+    update() {
+        let m = this.mouse;
+        let cam = this.camera;
+
+        if (cam.panDelay>0) {
+            cam.panDelay--;
+        } else {
+            if (m.isOverGrid) {
+            if (m.whichButton == mouseButtonID.middle) {
+                this.panCamera();
+            }
+        }
+        }
+
+        
+
+    }
 }
 
 class Mouse {
@@ -131,6 +198,9 @@ class Mouse {
         this.x = -100;
         this.y = -100;
         this.whichButton = NONE;
+
+        this.oldX = -100;
+        this.oldY = -100;
 
         this.isOverGrid = false;
         this.gridX = 0;
@@ -148,5 +218,7 @@ class Camera {
         this.y = 0;
         this.width = 16;
         this.height = 11;
+
+        this.panDelay = 0;
     }
 }

@@ -40,5 +40,7 @@ class Display {
         this.ctx.fillText(Math.floor(sim.timer/60)+"s",10,offY+20);
 
         this.ctx.fillText(m.isOverGrid+","+m.isOverMinimap,10,offY+40);
+
+        this.ctx.fillText(m.oldX+","+m.oldY,10,offY+60);
     }
 }

@@ -16,6 +16,7 @@ class Program{
     }
 
     update() {
+        this.control.update();
         this.simulation.update();
         this.display.refreshDisplay();
 
