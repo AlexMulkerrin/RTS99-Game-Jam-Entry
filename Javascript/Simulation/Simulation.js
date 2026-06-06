@@ -39,15 +39,39 @@ class Simulation {
         this.terrain[x][y].type = type;
     }
 
-    placeStructure(x,y,type) {
+    tryPlaceStructure(x,y,type) {
         let struc = new Structure(x,y,type);
 
-        let t = this.terrain[x][y];
-        if (t.hasStructure == false) {
-            
-            t.hasStructure = true;
-            t.occupant = this.structure.length;
+        let isValid = true;
+        for (let i=0; i<struc.size; i++) {
+            for (let j=0; j<struc.size; j++) {
+                let nx = x + i;
+                let ny = y + j;
 
+                if (this.isInBounds(nx,ny)) {
+                    let t = this.terrain[nx][ny];
+                    if (t.hasStructure == true) {
+                        isValid = false;
+                    }
+                } else {
+                    isValid = false;
+                }
+            }
+        }
+
+        if (isValid) {
+            for (let i=0; i<struc.size; i++) {
+                for (let j=0; j<struc.size; j++) {
+                    let nx = x + i;
+                    let ny = y + j;
+
+                    let t = this.terrain[nx][ny];
+                    t.hasStructure = true;
+                    t.occupant = this.structure.length;
+
+                    t.type = tileID.concrete;
+                }
+            }
             this.structure.push(struc);
         }
     }

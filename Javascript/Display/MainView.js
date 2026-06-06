@@ -24,6 +24,9 @@ class MainView {
         this.smallStructuresImage = new Image();
         this.smallStructuresImage.src = "Resources/Images/Small Structures.png";
 
+        this.mediumStructuresImage = new Image();
+        this.mediumStructuresImage.src = "Resources/Images/Medium Structures.png";
+
         this.cursorsImage = new Image();
         this.cursorsImage.src = "Resources/Images/Cursors.png";
     }
@@ -41,6 +44,7 @@ class MainView {
         this.drawMinimap(); 
 
         this.drawCursor();
+
 
     }
 
@@ -87,20 +91,25 @@ class MainView {
                 let x = vx*this.sqSize+this.viewOffsetX;
                 let y = vy*this.sqSize+this.viewOffsetY;
 
-                this.drawStructure(x,y,s.size,s.type);
+                this.drawStructure(x,y,s.size,s.tileIndex);
             }
             
             //this.drawStructure(vx,vy,s.type);
         }
     }
-    drawStructure(x,y,size,ID) {
+    drawStructure(x,y,size,index) {
         let sqSize = this.sqSize;
 
-        let tx = ID;
+        let tx = index;
         let ty = 0;
         
         if (size == 1) {
             this.ctx.drawImage(this.smallStructuresImage, 
+                tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
+                x, y, sqSize, sqSize);
+        } else if (size == 2) {
+            sqSize = sqSize*2;
+            this.ctx.drawImage(this.mediumStructuresImage, 
                 tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
                 x, y, sqSize, sqSize);
         }

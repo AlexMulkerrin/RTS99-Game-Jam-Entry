@@ -103,8 +103,12 @@ class Control {
                         sim.changeTile(m.gridX, m.gridY, tileID.road);
                         break;
                     case toolID.wall:
-                        sim.changeTile(m.gridX, m.gridY, tileID.concrete);
-                        sim.placeStructure(m.gridX, m.gridY,structureID.wall);
+                        sim.tryPlaceStructure(m.gridX, m.gridY,structureID.wall);
+                        break;
+                    case toolID.small:
+                        sim.tryPlaceStructure(m.gridX, m.gridY,structureID.silo);
+                    case toolID.medium:
+                        sim.tryPlaceStructure(m.gridX, m.gridY,structureID.barracks);
                         
                         break;
                 }
