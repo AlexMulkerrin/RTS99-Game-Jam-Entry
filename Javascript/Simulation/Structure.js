@@ -1,3 +1,5 @@
+const MAX_STRUCTURE_SIZE = 3;
+
 const structureID = {wall:0, barracks:1,silo:2,portal:3};
 
 const structureTypes = [
@@ -13,6 +15,8 @@ class Structure {
         this.y = inY;
         this.type = inType;
         this.size = structureTypes[this.type].size;
+
+        this.isAlive = true;
 
         this.tileIndex = structureTypes[this.type].tileIndex;
     }

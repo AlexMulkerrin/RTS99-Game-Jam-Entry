@@ -44,5 +44,12 @@ class Display {
         this.ctx.fillText(m.oldX+","+m.oldY,10,offY+60);
 
         this.ctx.fillText(tools[this.targetControl.currentTool],10,offY+80);
+
+        let out = m.gridX+","+m.gridY;
+        if (m.isOverGrid) {
+            let t = sim.terrain[m.gridX][m.gridY];
+            out += t.hasStructure+", occ:"+t.occupant;
+        }
+        this.ctx.fillText(out,10,offY+100);
     }
 }

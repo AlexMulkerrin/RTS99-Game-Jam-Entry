@@ -76,6 +76,48 @@ class Simulation {
         }
     }
 
+    tryRemoveStructure(x,y) {
+        
+        let foundStructure = this.checkForStructure(x,y);
+
+        if (foundStructure != NONE) {
+            let struc = this.structure[foundStructure];
+            
+            for (let i=0; i<struc.size; i++) {
+                for (let j=0; j<struc.size; j++) {
+                    let nx = struc.x + i;
+                    let ny = struc.y + j;
+
+                    let t = this.terrain[nx][ny];
+                    t.hasStructure = false;
+                    t.occupant = NONE;
+
+                    //t.type = tileID.ruin; do this?
+                }
+            }
+            struc.isAlive = false;
+        }
+    }
+
+    checkForStructure(x,y) {
+        let max = MAX_STRUCTURE_SIZE;
+
+        for (let i=0; i<max; i++) {
+            for (let j=0; j<max; j++) {
+                let nx = x + i;
+                let ny = y + j;
+
+                if (this.isInBounds(nx,ny)) {
+                    let t = this.terrain[nx][ny];
+                    if (t.hasStructure == true) {
+                        return t.occupant;
+                    }
+                } 
+            }
+        }
+        return NONE;
+    }
+
     update() {
         this.timer++;
 

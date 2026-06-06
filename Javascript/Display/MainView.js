@@ -85,17 +85,18 @@ class MainView {
         for (let i=0; i<sim.structure.length; i++) {
             let s = sim.structure[i];
 
-            let vx = s.x - cam.x;
-            let vy = s.y - cam.y;
+            if (s.isAlive) {
 
-            if (cam.isInBounds(vx,vy)) {
-                let x = vx*this.sqSize+this.viewOffsetX;
-                let y = vy*this.sqSize+this.viewOffsetY;
+                let vx = s.x - cam.x;
+                let vy = s.y - cam.y;
 
-                this.drawStructure(x,y,s.size,s.tileIndex);
+                if (cam.isInBounds(vx,vy)) {
+                    let x = vx*this.sqSize+this.viewOffsetX;
+                    let y = vy*this.sqSize+this.viewOffsetY;
+
+                    this.drawStructure(x,y,s.size,s.tileIndex);
+                }   
             }
-            
-            //this.drawStructure(vx,vy,s.type);
         }
     }
     drawStructure(x,y,size,index) {
