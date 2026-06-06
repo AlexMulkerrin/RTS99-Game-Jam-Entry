@@ -1,5 +1,5 @@
 const minimapColourID = {
-    water:"#334EAF", grass:"#29991D", concrete:"#cccccc",
+    water:"#334EAF", grass:"#29991D", concrete:"#cccccc", road:"#434343",
 
     cameraBorder:"#ffffff",
 }
@@ -38,6 +38,9 @@ class Minimap {
                         break;
                     case tileID.concrete:
                         colour = minimapColourID.concrete;
+                        break;
+                    case tileID.road:
+                        colour = minimapColourID.road;
                         break;
                     default:
                         colour = "#ff00ff";

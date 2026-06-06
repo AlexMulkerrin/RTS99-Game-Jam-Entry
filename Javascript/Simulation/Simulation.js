@@ -1,4 +1,4 @@
-const tileID = {water:0, grass:1, concrete:2};
+const tileID = {water:0, grass:1, concrete:2, road:3};
 
 class Simulation {
     constructor() {
