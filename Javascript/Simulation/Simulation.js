@@ -11,6 +11,8 @@ class Simulation {
 
         this.structure = [];
 
+        this.agent = [];
+
         this.hasMinimapChanged = true;
     }
 
@@ -50,7 +52,7 @@ class Simulation {
 
                 if (this.isInBounds(nx,ny)) {
                     let t = this.terrain[nx][ny];
-                    if (t.hasStructure == true) {
+                    if (t.hasStructure) {
                         isValid = false;
                     }
                 } else {
@@ -82,7 +84,7 @@ class Simulation {
 
         if (foundStructure != NONE) {
             let struc = this.structure[foundStructure];
-            
+
             for (let i=0; i<struc.size; i++) {
                 for (let j=0; j<struc.size; j++) {
                     let nx = struc.x + i;
@@ -109,13 +111,24 @@ class Simulation {
 
                 if (this.isInBounds(nx,ny)) {
                     let t = this.terrain[nx][ny];
-                    if (t.hasStructure == true) {
+                    if (t.hasStructure) {
                         return t.occupant;
                     }
                 } 
             }
         }
         return NONE;
+    }
+
+    tryAddAgent(x,y,type) {
+        let a = new Agent(x,y,type);
+
+        let t = this.terrain[x][y];
+        if (t.hasStructure || t.hasAgent) {
+            // can't place here
+        } else {
+            this.agent.push(a);
+        }
     }
 
     update() {
@@ -129,6 +142,7 @@ class Tile {
         this.type = tileID.grass;
 
         this.hasStructure = false;
+        this.hasAgent = false;
         this.occupant = NONE;
     }
 }

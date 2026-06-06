@@ -1,7 +1,7 @@
 const mouseButtonID = {left:1, middle:2, right:3};
 
-const toolID = {concrete:0, road:1, wall:2, small:3, medium:4, large:5, removeStructure:6};
-const tools = ["concrete","road","wall","1x1 building","2x2 building","3x3 building","remove structure"];
+const toolID = {concrete:0, road:1, wall:2, small:3, medium:4, large:5, removeStructure:6, robot:7};
+const tools = ["concrete","road","wall","1x1 building","2x2 building","3x3 building","remove structure","add robot"];
 
 class Control {
     constructor(inSimulation) {
@@ -116,6 +116,9 @@ class Control {
                         break;
                     case toolID.removeStructure:
                         sim.tryRemoveStructure(m.gridX, m.gridY);
+                        break;
+                    case toolID.robot:
+                        sim.tryAddAgent(m.gridX,m.gridY, agentID.robot);
                         break;
                 }
                 

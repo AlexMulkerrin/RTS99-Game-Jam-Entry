@@ -30,6 +30,9 @@ class MainView {
         this.largeStructuresImage = new Image();
         this.largeStructuresImage.src = "Resources/Images/Large Structures.png";
 
+        this.agentsImage = new Image();
+        this.agentsImage.src = "Resources/Images/Agents.png";
+
         this.cursorsImage = new Image();
         this.cursorsImage.src = "Resources/Images/Cursors.png";
     }
@@ -40,6 +43,7 @@ class MainView {
 
         this.drawTerrain();
         this.drawStructures(); 
+        this.drawAgents();
 
         if (this.targetSimulation.hasMinimapChanged) {
             this.minimap.refresh();
@@ -120,6 +124,38 @@ class MainView {
                 tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
                 x, y, sqSize, sqSize);
         }
+    }
+
+    drawAgents() {
+        let sim = this.targetSimulation;
+        let cam = this.targetControl.camera;
+
+        for (let i=0; i<sim.agent.length; i++) {
+            let a = sim.agent[i];
+
+            if (a.isAlive) {
+
+                let vx = a.x - cam.x;
+                let vy = a.y - cam.y;
+
+                if (cam.isInBounds(vx,vy)) {
+                    let x = vx*this.sqSize+this.viewOffsetX;
+                    let y = vy*this.sqSize+this.viewOffsetY;
+
+                    this.drawAgent(x,y,a.type);
+                }   
+            }
+        }
+    }
+    drawAgent(x,y,ID) {
+        let sqSize = this.sqSize;
+
+        let tx = ID;
+        let ty = 0;
+        
+        this.ctx.drawImage(this.agentsImage, 
+            tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
+            x, y, sqSize, sqSize);
     }
 
     drawMinimap() {

@@ -7,7 +7,7 @@ const structureTypes = [
     {name:"barracks",size:2,tileIndex:0},
     {name:"barracks",size:1,tileIndex:1},
     {name:"portal",size:3,tileIndex:0},
-]
+];
 
 class Structure {
     constructor(inX, inY, inType) {
