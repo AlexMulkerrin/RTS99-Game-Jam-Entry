@@ -142,16 +142,16 @@ class MainView {
                     let x = vx*this.sqSize+this.viewOffsetX;
                     let y = vy*this.sqSize+this.viewOffsetY;
 
-                    this.drawAgent(x,y,a.type);
+                    this.drawAgent(x,y,a.type, a.rotation);
                 }   
             }
         }
     }
-    drawAgent(x,y,ID) {
+    drawAgent(x,y,type,rotation) {
         let sqSize = this.sqSize;
 
-        let tx = ID;
-        let ty = 0;
+        let tx = rotation;
+        let ty = type;
         
         this.ctx.drawImage(this.agentsImage, 
             tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,

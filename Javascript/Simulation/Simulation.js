@@ -122,11 +122,14 @@ class Simulation {
 
     tryAddAgent(x,y,type) {
         let a = new Agent(x,y,type);
+        a.state = stateID.wander;
 
         let t = this.terrain[x][y];
         if (t.hasStructure || t.hasAgent) {
             // can't place here
         } else {
+            t.hasAgent = true;
+            t.occupant = this.agent.length;
             this.agent.push(a);
         }
     }
@@ -134,9 +137,60 @@ class Simulation {
     update() {
         this.timer++;
 
+        //if (this.timer%10 == 0) {
+            this.updateAgents();
+        //}
         //this.hasMinimapChanged = false;
     }
+    updateAgents() {
+        for (let i=0; i<this.agent.length; i++) {
+            let a = this.agent[i];
+
+            if (a.isAlive) {
+                if (a.state == stateID.wander) {
+                    this.handleAgentWander(i);
+                }
+                //a.rotation++;
+                //if (a.rotation>7) a.rotation = 0;
+            }
+        }
+    }
+
+    handleAgentWander(i) {
+        let a = this.agent[i];
+
+        if (a.movementAnimation == 0) { 
+            if ( random(20) == 0) {
+                let direc = random(direcDelta.length);
+
+                a.newRotation = direc;
+
+                if (a.rotation != a.newRotation) {
+                    a.isTurning = true;
+                    a.movementAnimation = agentTypes[a.type].turnDelay;
+                    a.turningDirection = a.getTurnDirection();
+                }
+                // todo add movement in direction
+            }
+        } else {
+            a.movementAnimation--;
+
+            if (a.movementAnimation == 0) {
+                if (a.isTurning) {
+                    if (a.rotation == a.newRotation) {
+                        a.isTurning = false;
+                    } else {
+                        a.rotation = (a.rotation + a.turningDirection) % 8;
+                        if (a.rotation < 0) a.rotation += 8;
+                        a.movementAnimation = agentTypes[a.type].turnDelay;
+                    }
+                }
+            }
+        }
+
+    }
 }
+
 class Tile {
     constructor() {
         this.type = tileID.grass;
