@@ -1,4 +1,5 @@
 const colourID = {
+    textDark:"#444499",
     hovered:"#d1d1fe", selected:"#00ff00"
 };
 
@@ -49,6 +50,7 @@ class MainView {
         this.drawStructures(); 
         this.drawAgents();
 
+        this.drawResourceStats();
         if (this.targetSimulation.hasMinimapChanged) {
             this.minimap.refresh();
         }
@@ -209,6 +211,24 @@ class MainView {
         this.ctx.drawImage(this.agentsImage, 
             tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
             x, y, sqSize, sqSize);
+    }
+
+    drawResourceStats() {
+        let sim = this.targetSimulation;
+        let storage = sim.faction[0].storage;
+
+        this.ctx.fillStyle = colourID.textDark;
+        this.ctx.font = "bold 8px sans-serif";
+
+        let out = "";
+        out += "essence: "+storage.essence;
+        out += " | concrete: "+storage.concrete;
+        out += " | metal: "+storage.metal;
+        out += " | fuel: "+storage.fuel;
+        out += " | power load: 50%";
+
+        this.ctx.fillText(out,4,11);
+
     }
 
     drawMinimap() {

@@ -13,6 +13,10 @@ class Simulation {
 
         this.agent = [];
 
+        this.numFactions = 2;
+        this.faction = [];
+        this.generateFactions();
+
         this.hasMinimapChanged = true;
     }
 
@@ -36,6 +40,20 @@ class Simulation {
             return true;
         } else {
             return false;
+        }
+    }
+
+    generateFactions() {
+        for (let i=0; i<this.numFactions; i++) {
+            let fac = new Faction();
+            if (i==0) {
+                // player's faction
+                fac.storage.essence = 100;
+                fac.storage.concrete = 50;
+                fac.storage.metal = 20;
+                fac.storage.fuel = 80;
+            }
+            this.faction.push(fac);
         }
     }
 
