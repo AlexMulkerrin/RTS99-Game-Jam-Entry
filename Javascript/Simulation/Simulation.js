@@ -39,6 +39,43 @@ class Simulation {
 
     changeTile(x,y,type) {
         this.terrain[x][y].type = type;
+        this.updateTileVariations(x,y);
+    }
+
+    updateTileVariations(x,y) {
+        let direc = [[0,0],[0,-1],[1,0],[0,1],[-1,0]];
+
+        for (let e=0; e<direc.length; e++) {
+                let nx = x + direc[e][0];
+                let ny = y + direc[e][1];
+
+                if (this.isInBounds(nx,ny)) {
+                    
+                    let t = this.terrain[nx][ny];
+                    t.tileVariation = 0;
+
+                    if (t.type == tileID.road) {
+                        this.calculateTileVariation(nx,ny);
+                    }
+                }
+        }
+    }
+    calculateTileVariation(x,y) {
+        let direc = [[0,-1],[1,0],[0,1],[-1,0]];
+
+        let adj = 0;
+        for (let e=0; e<direc.length; e++) {
+            let nx = x + direc[e][0];
+            let ny = y + direc[e][1];
+
+            if (this.isInBounds(nx,ny)) {
+                let t = this.terrain[nx][ny];
+                if (t.type == tileID.road) {
+                    adj += Math.pow(2,e);
+                }
+            }
+        }
+        this.terrain[x][y].tileVariation = adj;
     }
 
     tryPlaceStructure(x,y,type) {
@@ -71,9 +108,19 @@ class Simulation {
                     t.hasStructure = true;
                     t.occupant = this.structure.length;
 
-                    t.type = tileID.concrete;
+                    this.changeTile(nx,ny,tileID.concrete)
                 }
             }
+            // road connections 
+            // TODO move this into a function that takes type into account
+            /* Needs special road that only connects on one side, entrance tile?
+            if (struc.size == 2) {
+                this.changeTile(x,y+1,tileID.road);
+            } else if (struc.size == 3) {
+                this.changeTile(x+1,y+2,tileID.road);
+            }
+            */
+
             this.structure.push(struc);
         }
     }
@@ -194,6 +241,7 @@ class Simulation {
 class Tile {
     constructor() {
         this.type = tileID.grass;
+        this.tileVariation = 0;
 
         this.hasStructure = false;
         this.hasAgent = false;

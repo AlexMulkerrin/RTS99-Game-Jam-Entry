@@ -69,17 +69,17 @@ class MainView {
                 let nx = i + ctrl.camera.x;
                 let ny = j + ctrl.camera.y;
                 let t = sim.terrain[nx][ny];
-                this.drawTile(x,y,t.type); 
+                this.drawTile(x, y, t.type, t.tileVariation); 
 
 
             }
         }
     }
-    drawTile(x,y,ID) {
+    drawTile(x, y, ID, variation) {
         let sqSize = this.sqSize;
 
-        let tx = ID;
-        let ty = 0;
+        let tx = variation;
+        let ty = ID;
         
         this.ctx.drawImage(this.tilesImage, 
             tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
