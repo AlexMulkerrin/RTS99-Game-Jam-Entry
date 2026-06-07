@@ -69,12 +69,61 @@ class MainView {
                 let nx = i + ctrl.camera.x;
                 let ny = j + ctrl.camera.y;
                 let t = sim.terrain[nx][ny];
-                this.drawTile(x, y, t.type, t.tileVariation); 
 
+                if (t.type == tileID.grass) {
+                    this.drawTileQuarters(x, y, t.type, t.tileVariation);
+                } else {
+                    this.drawTile(x, y, t.type, t.tileVariation); 
+                }
 
             }
         }
     }
+    drawTileQuarters(x, y, type, variation) {
+        // hooboy this is a complex function. Essentially I worked out which quarter tile to draw for each quarter depending on the adj variation value. Lots of hardcoded values which depend on the order of quarter tile images. Let's hope it works.
+        let num,index,imageIndices;
+        
+        // choose top right quarter tile
+        imageIndices = [1,4,1,2,5,6,3,0];
+        num = variation & 0b00000111; //7
+        index = imageIndices[num];
+        this.drawQuaterTile(x,y,type,index,0);
+
+        //choose bottom right quarter tile
+        imageIndices = [1,5,1,3,4,6,2,0];
+        num = (variation & 0b00011100)/4; //32
+        index = imageIndices[num];
+        this.drawQuaterTile(x,y,type,index,1);
+
+        // choose bottom left quarter tile
+        imageIndices = [1,4,1,2,5,6,3,0];
+        num = (variation & 0b01110000)/16; //128
+        index = imageIndices[num];
+        this.drawQuaterTile(x,y,type,index,2);
+
+        // choose top left quarter tile
+        imageIndices = [1,5,1,3,4,6,2,0];
+        num = (variation & 0b11000000)/64 + (variation % 2)*4; // 192
+        index = imageIndices[num];
+        this.drawQuaterTile(x,y,type,index,3);
+
+    }
+    drawQuaterTile(x, y, ID, index, quarterID) {
+        let sqSize = this.sqSize;
+        let quarterPos = [ [8,0], [8,8], [0,8], [0,0] ];
+
+        let tx = index*(sqSize+1) + quarterPos[quarterID][0];
+        let ty = ID*(sqSize+1) + quarterPos[quarterID][1];
+
+        let qx = x + quarterPos[quarterID][0];
+        let qy = y + quarterPos[quarterID][1];
+
+        this.ctx.drawImage(this.tilesImage, 
+            tx, ty, 8,8,
+            qx, qy, 8,8);
+
+    }
+
     drawTile(x, y, ID, variation) {
         let sqSize = this.sqSize;
 

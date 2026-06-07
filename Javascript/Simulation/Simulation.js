@@ -28,6 +28,8 @@ class Simulation {
                 this.terrain[i][j] = tile;
             }
         }
+
+        this.updateAllTileVariations();
     }
     isInBounds(x,y) {
         if (x>=0 && x<this.width && y>=0 && y<this.height) {
@@ -42,8 +44,25 @@ class Simulation {
         this.updateTileVariations(x,y);
     }
 
+    updateAllTileVariations() {
+        for (let i=0; i<this.width; i++) {
+            for (let j=0; j<this.height; j++) {
+                let t = this.terrain[i][j];
+                    t.tileVariation = 0;
+
+                    if (t.type == tileID.road) {
+                        this.calculateTileVariation(i,j,t.type,"4 adj");
+                    } else if (t.type == tileID.grass) {
+                        this.calculateTileVariation(i,j,t.type,"8 adj");
+                    }
+            }
+        }
+    }
+
     updateTileVariations(x,y) {
-        let direc = [[0,0],[0,-1],[1,0],[0,1],[-1,0]];
+        let direc = [[0,0],[0,-1],[1,0],[0,1],[-1,0],
+                     [1,-1],[-1,-1],[-1,1],[1,1]]; 
+                     // try checking diagonals as well
 
         for (let e=0; e<direc.length; e++) {
                 let nx = x + direc[e][0];
@@ -55,13 +74,19 @@ class Simulation {
                     t.tileVariation = 0;
 
                     if (t.type == tileID.road) {
-                        this.calculateTileVariation(nx,ny);
+                        this.calculateTileVariation(nx,ny,t.type,"4 adj");
+                    } else if (t.type == tileID.grass) {
+                        this.calculateTileVariation(nx,ny,t.type,"8 adj");
                     }
                 }
         }
     }
-    calculateTileVariation(x,y) {
+    calculateTileVariation(x, y, type, mode) {
         let direc = [[0,-1],[1,0],[0,1],[-1,0]];
+
+        if (mode == "8 adj") {
+            direc = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+        }
 
         let adj = 0;
         for (let e=0; e<direc.length; e++) {
@@ -70,8 +95,17 @@ class Simulation {
 
             if (this.isInBounds(nx,ny)) {
                 let t = this.terrain[nx][ny];
-                if (t.type == tileID.road) {
+
+                if (type == tileID.road && t.type == tileID.road) {
                     adj += Math.pow(2,e);
+                } else if (type == tileID.grass) {
+                    if (t.type == tileID.concrete 
+                        || t.type == tileID.road
+                        || t.type == tileID.water) {
+                        // don't add to adjacency for these
+                    } else {
+                        adj += Math.pow(2,e);
+                    }
                 }
             }
         }

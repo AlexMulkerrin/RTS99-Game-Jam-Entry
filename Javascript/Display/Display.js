@@ -49,6 +49,7 @@ class Display {
         if (m.isOverGrid) {
             let t = sim.terrain[m.gridX][m.gridY];
             out += t.hasStructure+", occ:"+t.occupant;
+            out += ", var:"+t.tileVariation;
         }
         this.ctx.fillText(out,10,offY+100);
     }
