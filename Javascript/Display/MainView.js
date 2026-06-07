@@ -151,16 +151,16 @@ class MainView {
                     let x = vx*this.sqSize+this.viewOffsetX;
                     let y = vy*this.sqSize+this.viewOffsetY;
 
-                    this.drawStructure(x,y,s.size,s.tileIndex);
+                    this.drawStructure(x,y,s.size,s.tileIndex, s.tileVariation);
                 }   
             }
         }
     }
-    drawStructure(x,y,size,index) {
+    drawStructure(x,y,size,ID, variation) {
         let sqSize = this.sqSize;
 
-        let tx = index;
-        let ty = 0;
+        let tx = variation;
+        let ty = ID;
         
         if (size == 1) {
             this.ctx.drawImage(this.smallStructuresImage, 

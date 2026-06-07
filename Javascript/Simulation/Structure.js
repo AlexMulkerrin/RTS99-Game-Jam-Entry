@@ -5,7 +5,7 @@ const structureID = {wall:0, barracks:1,silo:2,portal:3};
 const structureTypes = [
     {name:"wall",size:1,tileIndex:0},
     {name:"barracks",size:2,tileIndex:0},
-    {name:"barracks",size:1,tileIndex:1},
+    {name:"silo",size:1,tileIndex:1},
     {name:"portal",size:3,tileIndex:0},
 ];
 
@@ -19,5 +19,6 @@ class Structure {
         this.isAlive = true;
 
         this.tileIndex = structureTypes[this.type].tileIndex;
+        this.tileVariation = 0;
     }
 }

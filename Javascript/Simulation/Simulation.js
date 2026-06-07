@@ -164,6 +164,7 @@ class Simulation {
             */
 
             this.structure.push(struc);
+            this.updateStructureVariations(struc.x,struc.y);
         }
     }
 
@@ -187,6 +188,7 @@ class Simulation {
                 }
             }
             struc.isAlive = false;
+            this.updateStructureVariations(x,y);
         }
     }
 
@@ -207,6 +209,58 @@ class Simulation {
             }
         }
         return NONE;
+    }
+
+    updateStructureVariations(x,y) {
+        let direc = [[0,0],[0,-1],[1,0],[0,1],[-1,0],
+                     [1,-1],[-1,-1],[-1,1],[1,1]]; 
+                     // try checking diagonals as well
+
+        for (let e=0; e<direc.length; e++) {
+                let nx = x + direc[e][0];
+                let ny = y + direc[e][1];
+
+                if (this.isInBounds(nx,ny)) {
+                    
+                    let t = this.terrain[nx][ny];
+                    if (t.hasStructure) {
+                        let struc = this.structure[t.occupant];
+                    
+                        if (struc.isAlive && struc.type == structureID.wall) {
+                            this.calculateStructureVariation(struc,"4 adj");
+                        } 
+                    }
+                }
+        }
+    }
+
+    calculateStructureVariation(struc,mode) {
+        let direc;
+
+        if (mode == "4 adj"){
+            direc = [[0,-1],[1,0],[0,1],[-1,0]];
+        } else if (mode == "8 adj") {
+            direc = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+        }
+
+        let adj = 0;
+        for (let e=0; e<direc.length; e++) {
+            let nx = struc.x + direc[e][0];
+            let ny = struc.y + direc[e][1];
+
+            if (this.isInBounds(nx,ny)) {
+                let t = this.terrain[nx][ny];
+                if (t.hasStructure) {
+                    let ns = this.structure[t.occupant];
+
+                    if (struc.type == structureID.wall 
+                        && ns.isAlive && ns.type == structureID.wall) {
+                        adj += Math.pow(2,e);
+                    } 
+                }
+            } 
+        }
+        struc.tileVariation = adj;
     }
 
     tryAddAgent(x,y,type) {
