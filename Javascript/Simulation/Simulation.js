@@ -52,7 +52,8 @@ class Simulation {
 
                     if (t.type == tileID.road) {
                         this.calculateTileVariation(i,j,t.type,"4 adj");
-                    } else if (t.type == tileID.grass) {
+                    } else if (t.type == tileID.grass ||
+                               t.type == tileID.water) {
                         this.calculateTileVariation(i,j,t.type,"8 adj");
                     }
             }
@@ -75,16 +76,19 @@ class Simulation {
 
                     if (t.type == tileID.road) {
                         this.calculateTileVariation(nx,ny,t.type,"4 adj");
-                    } else if (t.type == tileID.grass) {
+                    } else if (t.type == tileID.grass 
+                            || t.type == tileID.water ) {
                         this.calculateTileVariation(nx,ny,t.type,"8 adj");
                     }
                 }
         }
     }
     calculateTileVariation(x, y, type, mode) {
-        let direc = [[0,-1],[1,0],[0,1],[-1,0]];
+        let direc;
 
-        if (mode == "8 adj") {
+        if (mode == "4 adj"){
+            direc = [[0,-1],[1,0],[0,1],[-1,0]];
+        } else if (mode == "8 adj") {
             direc = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
         }
 
@@ -98,15 +102,19 @@ class Simulation {
 
                 if (type == tileID.road && t.type == tileID.road) {
                     adj += Math.pow(2,e);
+
                 } else if (type == tileID.grass) {
-                    if (t.type == tileID.concrete 
-                        || t.type == tileID.road
-                        || t.type == tileID.water) {
-                        // don't add to adjacency for these
-                    } else {
+                    if (t.type == tileID.grass) {
+                        adj += Math.pow(2,e);
+                    }
+                } else if (type == tileID.water) {
+                    if (t.type == tileID.water) {
                         adj += Math.pow(2,e);
                     }
                 }
+            } else {
+                // pretend continues off map borders
+                adj += Math.pow(2,e);
             }
         }
         this.terrain[x][y].tileVariation = adj;

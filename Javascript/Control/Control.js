@@ -97,7 +97,10 @@ class Control {
         if (m.isOverGrid) {
             if (m.whichButton == mouseButtonID.left) {
 
-                if (m.hoveredType == entityTypeID.structure) {
+                if (this.currentTool == toolID.removeStructure) {
+                    // don't try selecting if you're deleting things.
+                    this.handleToolUse();
+                } else if (m.hoveredType == entityTypeID.structure) {
                     m.selectedType = entityTypeID.structure;
                     m.selectedIndex = m.hoveredIndex;
                 } else if (m.hoveredType == entityTypeID.agent) {

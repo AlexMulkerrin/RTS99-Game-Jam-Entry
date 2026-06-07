@@ -70,7 +70,7 @@ class MainView {
                 let ny = j + ctrl.camera.y;
                 let t = sim.terrain[nx][ny];
 
-                if (t.type == tileID.grass) {
+                if (t.type == tileID.grass || t.type == tileID.water) {
                     this.drawTileQuarters(x, y, t.type, t.tileVariation);
                 } else {
                     this.drawTile(x, y, t.type, t.tileVariation); 
