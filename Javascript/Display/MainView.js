@@ -197,6 +197,19 @@ class MainView {
                     let x = vx*this.sqSize + this.viewOffsetX;
                     let y = vy*this.sqSize + this.viewOffsetY;
 
+                    if (a.movementAnimation != 0 && a.isTurning == false) {
+                        let progress = 16 - a.movementAnimation;
+                        if (a.isMovingDiagonal()) {
+                            progress = 16 - Math.floor(16*a.movementAnimation/23);
+                        }
+
+                        let dx = direcDelta[a.rotation][0]
+                        let dy = direcDelta[a.rotation][1];
+
+                        x += dx * progress;
+                        y += dy * progress;
+                    }
+
                     this.drawAgent(x,y,a.type, a.rotation);
                 }   
             }

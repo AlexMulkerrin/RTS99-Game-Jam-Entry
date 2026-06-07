@@ -283,7 +283,7 @@ class Simulation {
 
     tryAddAgent(x,y,type) {
         let a = new Agent(x,y,type);
-        a.state = stateID.wander;
+        a.state = stateID.movingToLocation;
 
         let t = this.terrain[x][y];
         if (t.hasStructure || t.hasAgent) {
@@ -310,6 +310,8 @@ class Simulation {
             if (a.isAlive) {
                 if (a.state == stateID.wander) {
                     this.handleAgentWander(i);
+                } else if (a.state == stateID.movingToLocation) {
+                    this.handleAgentMovingToLocation(i);
                 }
                 //a.rotation++;
                 //if (a.rotation>7) a.rotation = 0;
@@ -350,6 +352,66 @@ class Simulation {
         }
 
     }
+
+    handleAgentMovingToLocation(i) {
+        let a = this.agent[i];
+
+        if (a.movementAnimation == 0) {
+            a.newRotation = a.getDirectionToTarget();
+
+            if (a.rotation != a.newRotation) {
+                a.isTurning = true;
+                a.movementAnimation = agentTypes[a.type].turnDelay;
+                a.turningDirection = a.getTurnDirection();
+            } else {
+                let nx = a.x + direcDelta[a.rotation][0];
+                let ny = a.y + direcDelta[a.rotation][1];
+
+                if (this.isInBounds(nx,ny) 
+                    && this.terrain[nx][ny].occupant == NONE) {
+                
+                    a.newX = nx;
+                    a.newY = ny;
+                    this.terrain[a.newX][a.newY].occupant = i;
+
+                    if (a.isMovingDiagonal()) {
+                        a.movementAnimation = 23;
+                    } else {
+                        a.movementAnimation = 16;
+                    }
+                }
+
+            }
+        } else {
+            a.movementAnimation--;
+
+            if (a.movementAnimation == 0) {
+                if (a.isTurning) {
+                    if (a.rotation == a.newRotation) {
+                        a.isTurning = false;
+                    } else {
+                        a.rotation = (a.rotation + a.turningDirection) % 8;
+                        if (a.rotation < 0) a.rotation += 8;
+                        a.movementAnimation = agentTypes[a.type].turnDelay;
+                    }
+                } else {
+                    this.terrain[a.x][a.y].hasAgent = false;
+                    this.terrain[a.x][a.y].occupant = NONE;
+
+                    a.x = a.newX;
+                    a.y = a.newY;
+
+                    if (a.x == a.targX && a.y == a.targY) {
+                        a.state = stateID.idle;
+                    }
+                }
+            }
+
+        }
+
+
+    }
+
 }
 
 class Tile {
