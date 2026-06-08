@@ -168,7 +168,9 @@ class Simulation {
 
                 if (this.isInBounds(nx,ny)) {
                     let t = this.terrain[nx][ny];
-                    if (t.hasStructure) {
+                    if (t.hasStructure 
+                        || t.hasAgent
+                        || t.drops.length>0) {
                         isValid = false;
                     }
                 } else {
