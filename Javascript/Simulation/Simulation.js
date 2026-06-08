@@ -283,7 +283,7 @@ class Simulation {
 
     tryAddAgent(x,y,type) {
         let a = new Agent(x,y,type);
-        a.state = stateID.movingToLocation;
+        //a.state = stateID.movingToLocation;
 
         let t = this.terrain[x][y];
         if (t.hasStructure || t.hasAgent) {
@@ -293,6 +293,14 @@ class Simulation {
             t.occupant = this.agent.length;
             this.agent.push(a);
         }
+    }
+
+    sendMoveCommand(x,y,index) {
+        let a = this.agent[index];
+
+        a.targX = x;
+        a.targY = y;
+        a.state = stateID.movingToLocation;
     }
 
     update() {
@@ -379,6 +387,9 @@ class Simulation {
                     } else {
                         a.movementAnimation = 16;
                     }
+                } else {
+                    // can't move there
+                    a.state = stateID.idle;
                 }
 
             }
@@ -400,6 +411,8 @@ class Simulation {
 
                     a.x = a.newX;
                     a.y = a.newY;
+                    this.terrain[a.x][a.y].hasAgent = true;
+                    //this.terrain[a.x][a.y].occupant = i; already set?
 
                     if (a.x == a.targX && a.y == a.targY) {
                         a.state = stateID.idle;

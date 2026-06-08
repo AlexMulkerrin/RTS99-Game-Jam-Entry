@@ -18,7 +18,7 @@ class Agent {
         this.y = inY;
         this.rotation = rotationID.right;
 
-        this.targX = this.x+3;
+        this.targX = this.x;
         this.targY = this.y;
         this.newX = this.x;
         this.newY = this.y;
@@ -56,8 +56,21 @@ class Agent {
     }
 
     getDirectionToTarget() {
-        // TODO
-        return rotationID.right;
+
+        let dx = this.targX - this.x;
+        if (dx == 0) dx += 0.0001;
+        let dy = this.targY - this.y;
+        
+        let radians = Math.atan(dy / dx);
+        let degrees = radians * 360 / (2 * Math.PI);
+        
+        if (dx < 0) degrees += 180;
+        if (dx > 0 && dy < 0) degrees += 360;
+
+        // find rotation octant in 45 degrees segments offset by 22.5 degrees
+        let rotation = Math.floor(( degrees + 22.5) / 45) % 8;
+
+        return rotation;
     }
 
     isMovingDiagonal() {

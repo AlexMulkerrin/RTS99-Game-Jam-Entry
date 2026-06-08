@@ -80,6 +80,7 @@ class Control {
         }
     }
     handleMouseDown(event) {
+        let sim = this.targetSimulation;
         let m = this.mouse;
 
         m.whichButton = event.which;
@@ -89,6 +90,16 @@ class Control {
 
         if (m.whichButton == mouseButtonID.left && m.isOverMinimap) {
             this.centerCamera(m.miniX,m.miniY);
+        } else if (m.whichButton == mouseButtonID.right) {
+            if (m.isOverGrid) {
+                if (m.selectedType == entityTypeID.agent) {
+                    sim.sendMoveCommand(m.gridX,m.gridY,m.selectedIndex);
+                }
+            } else if (m.isOverMinimap) {
+                if (m.selectedType == entityTypeID.agent) {
+                    sim.sendMoveCommand(m.miniX,m.miniY,m.selectedIndex);
+                }
+            }
         }
     }
     handleMouseUp(event) {
