@@ -13,7 +13,7 @@ const agentTypes = [
 ];
 
 class Agent {
-    constructor(inX, inY, inType) {
+    constructor(inX, inY, inType, inFaction) {
         this.x = inX;
         this.y = inY;
         this.rotation = rotationID.right;
@@ -24,6 +24,7 @@ class Agent {
         this.newY = this.y;
 
         this.type = inType;
+        this.faction = inFaction
         this.isAlive = true;
         this.state = stateID.idle;
 

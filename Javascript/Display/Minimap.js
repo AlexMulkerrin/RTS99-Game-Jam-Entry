@@ -1,5 +1,6 @@
 const minimapColourID = {
-    water:"#334EAF", grass:"#29991D", concrete:"#cccccc", road:"#434343",
+    water:"#334EAF", grass:"#29991D", concrete:"#cccccc", 
+    road:"#434343", wall:"#808080",
 
     cameraBorder:"#ffffff",
 }
@@ -17,6 +18,8 @@ class Minimap {
 
     refresh() {
         this.drawTerrain();
+        this.drawStructures();
+        this.drawAgents();
 
         this.drawCameraBoundaries();
     }
@@ -51,6 +54,34 @@ class Minimap {
             }
         }
         
+    }
+
+    drawStructures() {
+        let sim = this.targetSimulation;
+
+        for (let i=0; i<sim.structure.length; i++) {
+            let s = sim.structure[i];
+
+            let colour = sim.faction[s.faction].structureColour;
+            if (s.type == structureID.wall) {
+                colour = minimapColourID.wall;
+            }
+
+            this.ctx.fillStyle = colour;
+            this.ctx.fillRect(s.x,s.y,s.size,s.size);
+        }
+    }
+
+    drawAgents() {
+        let sim = this.targetSimulation;
+
+        for (let i=0; i<sim.agent.length; i++) {
+            let a = sim.agent[i];
+
+            let colour = sim.faction[a.faction].agentColour;
+            this.ctx.fillStyle = colour;
+            this.ctx.fillRect(a.x,a.y,1,1);
+        }
     }
 
     drawCameraBoundaries() {

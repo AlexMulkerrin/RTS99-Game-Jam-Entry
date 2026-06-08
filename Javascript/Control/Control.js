@@ -170,6 +170,7 @@ class Control {
     handleToolUse() {
         let sim = this.targetSimulation;
         let m = this.mouse;
+        let f = factionID.player;
 
         switch(this.currentTool) {
             case toolID.concrete:
@@ -179,25 +180,25 @@ class Control {
                 sim.changeTile(m.gridX, m.gridY, tileID.road);
                 break;
             case toolID.wall:
-                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.wall);
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.wall, f);
                 break;
             case toolID.small:
-                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.silo);
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.silo, f);
                 break;
             case toolID.medium:
-                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.barracks);
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.barracks, f);
                 break;
             case toolID.large:
-                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.portal);
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.portal, f);
                 break;
             case toolID.removeStructure:
                 sim.tryRemoveStructure(m.gridX, m.gridY);
                 break;
             case toolID.robot:
-                sim.tryAddAgent(m.gridX,m.gridY, agentID.robot);
+                sim.tryAddAgent(m.gridX,m.gridY, agentID.robot, f);
                 break;
             case toolID.rover:
-                sim.tryAddAgent(m.gridX,m.gridY, agentID.rover);
+                sim.tryAddAgent(m.gridX,m.gridY, agentID.rover, f);
                 break;
         }
     }
@@ -336,6 +337,20 @@ class Camera {
 
     isInBounds(x,y) {
         if (x>=0 && x<this.width && y>=0 && y<this.height) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    isSquareInBounds(x,y,size) {
+        let span = size-1;
+        let topLeft = this.isInBounds(x,y);
+        let topRight = this.isInBounds(x+span,y);
+        let bottomLeft = this.isInBounds(x,y+span);
+        let bottomRight = this.isInBounds(x+span,y+span);
+
+        if (topLeft || topRight || bottomLeft || bottomRight) {
             return true;
         } else {
             return false;

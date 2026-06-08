@@ -10,12 +10,13 @@ const structureTypes = [
 ];
 
 class Structure {
-    constructor(inX, inY, inType) {
+    constructor(inX, inY, inType, inFaction) {
         this.x = inX;
         this.y = inY;
         this.type = inType;
         this.size = structureTypes[this.type].size;
 
+        this.faction = inFaction
         this.isAlive = true;
 
         this.tileIndex = structureTypes[this.type].tileIndex;

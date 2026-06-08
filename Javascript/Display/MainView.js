@@ -1,6 +1,6 @@
 const colourID = {
-    textDark:"#444499",
-    hovered:"#d1d1fe", selected:"#00ff00"
+    textDark:"#444499", borders:"#8FB1C9",
+    hovered:"#d1d1fe", selected:"#00ff00",
 };
 
 class MainView {
@@ -53,6 +53,7 @@ class MainView {
         this.drawStructures(); 
         this.drawAgents();
 
+        this.drawBorders();
         this.drawResourceStats();
         this.drawSelectionStats();
 
@@ -176,7 +177,9 @@ class MainView {
                 let vx = s.x - cam.x;
                 let vy = s.y - cam.y;
 
-                if (cam.isInBounds(vx,vy)) {
+                let cx = vx + s.size - 1;
+
+                if (cam.isSquareInBounds(vx,vy,s.size)) {
                     let x = vx*this.sqSize+this.viewOffsetX;
                     let y = vy*this.sqSize+this.viewOffsetY;
 
@@ -251,6 +254,14 @@ class MainView {
         this.ctx.drawImage(this.agentsImage, 
             tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
             x, y, sqSize, sqSize);
+    }
+
+    drawBorders() {
+        this.ctx.fillStyle = colourID.borders;
+
+        this.ctx.fillRect(0,0,this.c.width,this.sqSize);
+        this.ctx.fillRect(this.c.width-64,0,64,this.c.height);
+        this.ctx.fillRect(0,this.c.height-8,this.c.width, 8);
     }
 
     drawResourceStats() {

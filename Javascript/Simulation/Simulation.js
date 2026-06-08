@@ -63,9 +63,9 @@ class Simulation {
     }
 
     generateFactions() {
-        for (let i=0; i<this.numFactions; i++) {
+        for (let i=0; i<this.numFactions+1; i++) {
             let fac = new Faction();
-            if (i==0) {
+            if (i == factionID.player) {
                 // player's faction
                 fac.storage.essence = 100;
                 fac.storage.concrete = 50;
@@ -157,8 +157,8 @@ class Simulation {
         this.terrain[x][y].tileVariation = adj;
     }
 
-    tryPlaceStructure(x,y,type) {
-        let struc = new Structure(x,y,type);
+    tryPlaceStructure(x,y,type,faction) {
+        let struc = new Structure(x,y,type,faction);
 
         let isValid = true;
         for (let i=0; i<struc.size; i++) {
@@ -302,8 +302,8 @@ class Simulation {
         struc.tileVariation = adj;
     }
 
-    tryAddAgent(x,y,type) {
-        let a = new Agent(x,y,type);
+    tryAddAgent(x,y,type,faction) {
+        let a = new Agent(x,y,type,faction);
         //a.state = stateID.movingToLocation;
 
         let t = this.terrain[x][y];
