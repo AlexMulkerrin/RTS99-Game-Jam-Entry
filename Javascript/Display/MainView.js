@@ -26,6 +26,9 @@ class MainView {
         this.tilesImage = new Image();
         this.tilesImage.src = "Resources/Images/Tiles.png";
 
+        this.itemsImage = new Image();
+        this.itemsImage.src = "Resources/Images/Items.png";
+
         this.smallStructuresImage = new Image();
         this.smallStructuresImage.src = "Resources/Images/Small Structures.png";
 
@@ -51,6 +54,8 @@ class MainView {
         this.drawAgents();
 
         this.drawResourceStats();
+        this.drawSelectionStats();
+
         if (this.targetSimulation.hasMinimapChanged) {
             this.minimap.refresh();
         }
@@ -76,6 +81,10 @@ class MainView {
                     this.drawTileQuarters(x, y, t.type, t.tileVariation);
                 } else {
                     this.drawTile(x, y, t.type, t.tileVariation); 
+                }
+
+                if (t.drops.length != 0) {
+                    this.drawDrops(x,y,t.drops);
                 }
 
             }
@@ -133,6 +142,24 @@ class MainView {
         let ty = ID;
         
         this.ctx.drawImage(this.tilesImage, 
+            tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
+            x, y, sqSize, sqSize);
+    }
+
+    drawDrops(x,y,drops) {
+        for (let i=0; i<drops.length; i++) {
+            let item = drops[i];
+            this.drawItem(x,y,item.type);
+        }
+    }
+
+    drawItem(x,y,ID) {
+        let sqSize = this.sqSize;
+
+        let tx = ID;
+        let ty = 0;
+
+        this.ctx.drawImage(this.itemsImage,
             tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
             x, y, sqSize, sqSize);
     }
@@ -242,6 +269,50 @@ class MainView {
 
         this.ctx.fillText(out,4,11);
 
+    }
+
+    drawSelectionStats() {
+        let sim = this.targetSimulation;
+        let m = this.targetControl.mouse;
+
+        this.ctx.fillStyle = colourID.textDark;
+        this.ctx.font = "bold 8px sans-serif";
+
+        let out = [];
+        if (m.selectedType == entityTypeID.agent) {
+            let a = sim.agent[m.selectedIndex];
+
+            let stats = agentTypes[a.type];
+            out.push(stats.name);
+
+            for (let i=0; i<stats.invSlots; i++) {
+                if (i<a.inventory.length) {
+                    let item = a.inventory[i];
+                    out.push(itemTypes[item.type].name+"x"+item.quantity);
+                } else {
+                    out.push("-");
+                }
+            }
+
+        } else if (m.selectedType == entityTypeID.structure) {
+            let s = sim.structure[m.selectedIndex];
+            let stats = structureTypes[s.type];
+            out.push(stats.name);
+
+            for (let i=0; i<stats.invSlots; i++) {
+                if (i<s.inventory.length) {
+                    let item = s.inventory[i];
+                    out.push(itemTypes[item.type].name+"x"+item.quantity);
+                } else {
+                    out.push("-");
+                }
+            }
+        }
+
+        let y = 90;
+        for (let i=0; i<out.length; i++) {
+            this.ctx.fillText(out[i],260,y+i*10);
+        }
     }
 
     drawMinimap() {

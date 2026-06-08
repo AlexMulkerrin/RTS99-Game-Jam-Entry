@@ -3,10 +3,10 @@ const MAX_STRUCTURE_SIZE = 3;
 const structureID = {wall:0, barracks:1,silo:2,portal:3};
 
 const structureTypes = [
-    {name:"wall",size:1,tileIndex:0},
-    {name:"barracks",size:2,tileIndex:0},
-    {name:"silo",size:1,tileIndex:1},
-    {name:"portal",size:3,tileIndex:0},
+    {name:"wall",size:1,tileIndex:0, invSlots:0, maxStack:0},
+    {name:"barracks",size:2,tileIndex:0, invSlots:4, maxStack:20},
+    {name:"silo",size:1,tileIndex:1, invSlots:1, maxStack:100},
+    {name:"portal",size:3,tileIndex:0, invSlots:8, maxStack:100},
 ];
 
 class Structure {
@@ -20,5 +20,7 @@ class Structure {
 
         this.tileIndex = structureTypes[this.type].tileIndex;
         this.tileVariation = 0;
+
+        this.inventory = [];
     }
 }

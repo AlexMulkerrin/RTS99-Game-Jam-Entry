@@ -7,9 +7,9 @@ const stateID = {idle:0, wander:1, movingToLocation:2}
 
 const agentID = {robot:0, rover:1};
 
-agentTypes = [
-    {name:"robot", turnDelay:10},
-    {name:"rover", turnDelay:30},
+const agentTypes = [
+    {name:"robot", turnDelay:10, invSlots:3, maxStack:10},
+    {name:"rover", turnDelay:30, invSlots:4, maxStack:40},
 ];
 
 class Agent {
@@ -32,6 +32,8 @@ class Agent {
         this.newY = 0;
         this.newRotation = rotationID.right;
         this.isTurning = false;
+
+        this.inventory = [];
     }
 
     getTurnDirection() {
@@ -82,6 +84,15 @@ class Agent {
 	} else {
 		return false;
 	}
+    }
+
+    findEmptySlot() {
+        let len = this.inventory.length;
+        if (len < agentTypes[this.type].invSlots) {
+            return len;
+        } else {
+            return NONE;
+        }
     }
 
 }

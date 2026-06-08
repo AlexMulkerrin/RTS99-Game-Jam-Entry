@@ -1,5 +1,11 @@
 const tileID = {water:0, grass:1, concrete:2, road:3};
 
+const itemID = {essence:0};
+
+const itemTypes = [
+    {name:"essence", bulk:1},
+]
+
 class Simulation {
     constructor() {
         this.timer = 0;
@@ -8,6 +14,7 @@ class Simulation {
         this.height = 64;
         this.terrain = [];
         this.generateTerrain();
+        this.generateItemDrops();
 
         this.structure = [];
 
@@ -40,6 +47,18 @@ class Simulation {
             return true;
         } else {
             return false;
+        }
+    }
+
+    generateItemDrops() {
+        for (let i=0; i<this.width; i++) {
+            for (let j=0; j<this.height; j++) {
+                if (random(20)==0) {
+                    let item = new Item(itemID.essence, random(10)+1);
+                    let t = this.terrain[i][j];
+                    t.drops.push(item);
+                }
+            }
         }
     }
 
@@ -380,6 +399,9 @@ class Simulation {
                 
                     a.newX = nx;
                     a.newY = ny;
+                    // not sure if this is a good idea, 
+                    // two tiles with the same occupant?
+                    this.terrain[a.newX][a.newY].hasAgent = true; 
                     this.terrain[a.newX][a.newY].occupant = i;
 
                     if (a.isMovingDiagonal()) {
@@ -406,13 +428,7 @@ class Simulation {
                         a.movementAnimation = agentTypes[a.type].turnDelay;
                     }
                 } else {
-                    this.terrain[a.x][a.y].hasAgent = false;
-                    this.terrain[a.x][a.y].occupant = NONE;
-
-                    a.x = a.newX;
-                    a.y = a.newY;
-                    this.terrain[a.x][a.y].hasAgent = true;
-                    //this.terrain[a.x][a.y].occupant = i; already set?
+                    this.handleAgentOnNewTile(i);
 
                     if (a.x == a.targX && a.y == a.targY) {
                         a.state = stateID.idle;
@@ -420,6 +436,27 @@ class Simulation {
                 }
             }
 
+        }
+
+
+    }
+
+    handleAgentOnNewTile(index) {
+        let a = this.agent[index];
+        this.terrain[a.x][a.y].hasAgent = false;
+        this.terrain[a.x][a.y].occupant = NONE;
+
+        a.x = a.newX;
+        a.y = a.newY;
+
+        // check for item pickups
+        let t = this.terrain[a.x][a.y];
+        if (t.drops.length>0) {
+            let emptySlot = a.findEmptySlot();
+
+            if (emptySlot != NONE) {
+                a.inventory[emptySlot] = t.drops.pop();
+            }
         }
 
 
@@ -435,5 +472,14 @@ class Tile {
         this.hasStructure = false;
         this.hasAgent = false;
         this.occupant = NONE;
+
+        this.drops = [];
+    }
+}
+
+class Item {
+    constructor(inType, inQuantity) {
+        this.type = inType;
+        this.quantity = inQuantity;
     }
 }
