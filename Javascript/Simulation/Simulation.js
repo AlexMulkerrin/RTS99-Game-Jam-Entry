@@ -511,8 +511,33 @@ class Simulation {
             a.targX = targ.x;
             a.targY = targ.y;
 
-            if (a.isInRange() && a.cooldown == 0) {
-                this.fireProjectile(a);
+            if (a.movementAnimation == 0) {
+                a.newRotation = a.getDirectionToTarget();
+
+                if (a.rotation != a.newRotation) {
+                    a.isTurning = true;
+                    a.movementAnimation = agentTypes[a.type].turnDelay;
+                    a.turningDirection = a.getTurnDirection();
+                } else {
+                    // pointing the right way
+                    if (a.isInRange() && a.cooldown == 0) {
+                        this.fireProjectile(a);
+                    }
+                }
+            } else {
+                a.movementAnimation--;
+
+                if (a.movementAnimation == 0) {
+                    if (a.isTurning) {
+                        if (a.rotation == a.newRotation) {
+                            a.isTurning = false;
+                        } else {
+                            a.rotation = (a.rotation + a.turningDirection) % 8;
+                            if (a.rotation < 0) a.rotation += 8;
+                            a.movementAnimation = agentTypes[a.type].turnDelay;
+                        }
+                    }
+                }
             }
         } else {
             a.state = stateID.idle;
