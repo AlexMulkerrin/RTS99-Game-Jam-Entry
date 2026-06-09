@@ -35,7 +35,7 @@ const structureTypes = [
     {name:"Solar panels",size:3,tileIndex:6, invSlots:0, maxStack:0},
     {name:"Battery",size:2,tileIndex:11, invSlots:0, maxStack:0},
 
-    {name:"Landed Mothership",size:3,tileIndex:6, invSlots:8, maxStack:400},
+    {name:"Landed Mothership",size:3,tileIndex:7, invSlots:8, maxStack:400},
     {name:"sandbags",size:1,tileIndex:1, invSlots:0, maxStack:0},
     {name:"chain link fence",size:1,tileIndex:2, invSlots:0, maxStack:0},
     {name:"wooden wall",size:1,tileIndex:3, invSlots:0, maxStack:0},
