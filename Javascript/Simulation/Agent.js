@@ -3,15 +3,15 @@ const rotationID = { right:0, rightDown:1, down:2, leftDown:3, left:4,
 const direcDelta =[ [1,0],[1,1],[0,1],[-1,1],
 				    [-1,0],[-1,-1],[0,-1],[1,-1]];
 
-const stateID = {idle:0, wander:1, movingToLocation:2, attacking:3}
+const stateID = {idle:0, wander:1, movingToLocation:2, attacking:3,}
 
 const agentID = {robot:0, rover:1};
 
 const agentTypes = [
     {name:"robot", turnDelay:10, invSlots:3, maxStack:10, health:40, 
-        damage:5, projectileSpeed:0.2, cooldown:50},
+        damage:5, projectileSpeed:0.2, cooldown:50, range:6},
     {name:"rover", turnDelay:30, invSlots:4, maxStack:40, health:60, 
-        damage:10, projectileSpeed:0.2, cooldown:40},
+        damage:10, projectileSpeed:0.2, cooldown:40, range:11},
 ];
 
 class Agent {
@@ -104,8 +104,17 @@ class Agent {
     }
 
     isInRange() {
-        // TODO calculate range to targX targY
-        return true;
+        let dx = this.targX - this.x;
+		let dy = this.targY - this.y;
+		let dist = dx*dx+dy*dy;
+		
+        let range = agentTypes[this.type].range;
+
+		if (dist<range) {
+			return true;
+		} else {
+           return false;
+        }
     }
 
 }

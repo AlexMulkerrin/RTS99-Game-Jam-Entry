@@ -521,7 +521,7 @@ class Simulation {
                 } else {
                     // pointing the right way
                     if (a.isInRange() && a.cooldown == 0) {
-                        this.fireProjectile(a);
+                        this.fireProjectile(index);
                     }
                 }
             } else {
@@ -544,12 +544,14 @@ class Simulation {
         }
     }
 
-    fireProjectile(a) {
+    fireProjectile(index) {
+        let a = this.agent[index];
+
         let dam = agentTypes[a.type].damage;
         let spd = agentTypes[a.type].projectileSpeed;
 
         let proj = new Projectile(
-            dam, a.targID, a.x, a.y, 
+            dam, index, a.targID, a.x, a.y, 
             a.targX, a.targY, spd);
 
         a.cooldown = agentTypes[a.type].cooldown;
@@ -568,7 +570,7 @@ class Simulation {
                     let t = this.terrain[p.endX][p.endY];
 
                     if (t.hasAgent && t.occupant == p.targID) {
-                        this.dealDamage(p.damage, p.targID);
+                        this.dealDamage(p.damage, p.targID, p.firerID);
                     }
 
                     p.isAlive = false;
@@ -577,12 +579,16 @@ class Simulation {
         }
     }
 
-    dealDamage(damage, targID) {
+    dealDamage(damage, targID, firerID) {
         let targ = this.agent[targID];
         targ.health -= damage;
     
         if (targ.health <= 0) {
             this.killAgent(targ);
+        } else {
+            if (targ.state == stateID.idle) {
+                this.sendAttackCommand(targID, firerID);
+            }
         }
     }
 
@@ -617,8 +623,10 @@ class Item {
 }
 
 class Projectile {
-    constructor(inDamage, inTargetID, inStartX, inStartY, inEndX, inEndY, inSpeed) {
+    constructor(inDamage, inIndex, inTargetID, inStartX, inStartY, inEndX, inEndY, inSpeed) {
         this.damage = inDamage;
+
+        this.firerID = inIndex;
         this.targID = inTargetID;
 
         this.startX = inStartX;
