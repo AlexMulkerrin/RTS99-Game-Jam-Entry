@@ -1,9 +1,11 @@
-const factionID = {neutral:0, player:1, cpu:2};
+const factionID = {neutral:0, player:1, enemy:2};
+
+const factionColours = ["#ff0000","#00ffb3","#ffff00"];
 
 class Faction {
-    constructor() {
+    constructor(inColour) {
         this.name = "robots";
-        this.agentColour = "#ff9900";
+        this.agentColour = inColour;
         this.structureColour = "#FF7775";
         this.storage = new Storage();
     }

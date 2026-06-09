@@ -3,7 +3,7 @@ const tileID = {water:0, grass:1, concrete:2, road:3};
 const itemID = {essence:0};
 
 const itemTypes = [
-    {name:"essence", bulk:1},
+    {name:"essence", bulk:1, minimapColour:"#FFC7FF"},
 ]
 
 class Simulation {
@@ -64,15 +64,33 @@ class Simulation {
 
     generateFactions() {
         for (let i=0; i<this.numFactions+1; i++) {
-            let fac = new Faction();
+            let colour = factionColours[i];
+            let fac = new Faction(colour);
             if (i == factionID.player) {
                 // player's faction
                 fac.storage.essence = 100;
                 fac.storage.concrete = 50;
                 fac.storage.metal = 20;
                 fac.storage.fuel = 80;
+            } else if (i == factionID.enemy) {
+                this.generateAgents(i, 100, "random");
             }
             this.faction.push(fac);
+        }
+    }
+
+    generateAgents(faction, number, mode) {
+        for (let i=0; i<number; i++) {
+            if (mode == "random") {
+                let isPlaced = false;
+                while (isPlaced == false) {
+                    let x = random(this.width);
+                    let y = random(this.height);
+
+                    isPlaced = this.tryAddAgent(x,y,agentID.robot, faction);
+                }
+                
+            }
         }
     }
 
@@ -302,17 +320,30 @@ class Simulation {
         struc.tileVariation = adj;
     }
 
+    checkForEmptySpace(x,y) {
+        let t = this.terrain[x][y];
+        if (t.hasStructure 
+            || t.hasAgent 
+            || t.type == tileID.water) {
+            // can't place here
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     tryAddAgent(x,y,type,faction) {
         let a = new Agent(x,y,type,faction);
         //a.state = stateID.movingToLocation;
 
         let t = this.terrain[x][y];
-        if (t.hasStructure || t.hasAgent) {
-            // can't place here
-        } else {
+        if (this.checkForEmptySpace(x,y)) {
             t.hasAgent = true;
             t.occupant = this.agent.length;
             this.agent.push(a);
+            return true
+        } else {
+            return false;
         }
     }
 

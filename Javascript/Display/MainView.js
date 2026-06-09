@@ -241,6 +241,10 @@ class MainView {
                     }
 
                     this.drawAgent(x,y,a.type, a.rotation);
+
+                     // DEBUG
+                    this.ctx.fillStyle = sim.faction[a.faction].agentColour;
+                    this.ctx.fillRect(x,y,2,2);
                 }   
             }
         }
@@ -266,7 +270,7 @@ class MainView {
 
     drawResourceStats() {
         let sim = this.targetSimulation;
-        let storage = sim.faction[0].storage;
+        let storage = sim.faction[factionID.player].storage;
 
         this.ctx.fillStyle = colourID.textDark;
         this.ctx.font = "bold 8px sans-serif";

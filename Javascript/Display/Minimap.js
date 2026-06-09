@@ -19,6 +19,7 @@ class Minimap {
     refresh() {
         this.drawTerrain();
         this.drawStructures();
+        this.drawItemDrops();
         this.drawAgents();
 
         this.drawCameraBoundaries();
@@ -72,6 +73,24 @@ class Minimap {
         }
     }
 
+    drawItemDrops() {
+        let sim = this.targetSimulation;
+
+        for (let i=0; i<sim.width; i++) {
+            for (let j=0; j<sim.height; j++) {
+                let t = sim.terrain[i][j];
+
+                if (t.drops.length>0) {
+                    let item = t.drops[0];
+                    let colour = itemTypes[item.type].minimapColour
+                    this.ctx.fillStyle = colour ;
+                    this.ctx.fillRect(i,j,1,1);
+                }
+               
+            }
+        }
+    }
+
     drawAgents() {
         let sim = this.targetSimulation;
 
@@ -83,6 +102,8 @@ class Minimap {
             this.ctx.fillRect(a.x,a.y,1,1);
         }
     }
+
+    
 
     drawCameraBoundaries() {
         let cam = this.targetControl.camera;
