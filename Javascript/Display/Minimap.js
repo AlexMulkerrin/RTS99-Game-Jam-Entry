@@ -97,9 +97,11 @@ class Minimap {
         for (let i=0; i<sim.agent.length; i++) {
             let a = sim.agent[i];
 
-            let colour = sim.faction[a.faction].agentColour;
-            this.ctx.fillStyle = colour;
-            this.ctx.fillRect(a.x,a.y,1,1);
+            if (a.isAlive) {
+                let colour = sim.faction[a.faction].agentColour;
+                this.ctx.fillStyle = colour;
+                this.ctx.fillRect(a.x,a.y,1,1);
+            }
         }
     }
 

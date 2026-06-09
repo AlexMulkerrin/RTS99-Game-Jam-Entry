@@ -6,6 +6,11 @@ const itemTypes = [
     {name:"essence", bulk:1, minimapColour:"#FFC7FF"},
 ]
 
+const WATER_RARITY = 20; // TODO use this in terrain generator
+const ESSENCE_RARITY = 80;
+
+const ENEMY_FORCE_SIZE = 10;
+
 class Simulation {
     constructor() {
         this.timer = 0;
@@ -13,6 +18,8 @@ class Simulation {
         this.width = 64;
         this.height = 64;
         this.terrain = [];
+        this.terrainGenerator = new TerrainGenerator(this.width, this.height);
+
         this.generateTerrain();
         this.generateItemDrops();
 
@@ -29,17 +36,20 @@ class Simulation {
     }
 
     generateTerrain() {
-        for (let i=0; i<this.width; i++) {
+
+        let seed = random(100);
+        this.terrain = this.terrainGenerator.generateFromSeed(seed);
+        /*for (let i=0; i<this.width; i++) {
             this.terrain[i] = [];
             for (let j=0; j<this.height; j++) {
 
                 let tile = new Tile();
-                if (random(10)==0) {
+                if (random(WATER_RARITY)==0) {
                     tile.type = tileID.water;
                 }
                 this.terrain[i][j] = tile;
             }
-        }
+        }*/
 
         this.updateAllTileVariations();
     }
@@ -54,7 +64,8 @@ class Simulation {
     generateItemDrops() {
         for (let i=0; i<this.width; i++) {
             for (let j=0; j<this.height; j++) {
-                if (random(20)==0) {
+                if (random(ESSENCE_RARITY)==0 
+                    && this.terrain[i][j].type != tileID.water) {
                     let item = new Item(itemID.essence, random(10)+1);
                     let t = this.terrain[i][j];
                     t.drops.push(item);
@@ -74,7 +85,7 @@ class Simulation {
                 fac.storage.metal = 20;
                 fac.storage.fuel = 80;
             } else if (i == factionID.enemy) {
-                this.generateAgents(i, 100, "random");
+                this.generateAgents(i, ENEMY_FORCE_SIZE, "random");
             }
             this.faction.push(fac);
         }

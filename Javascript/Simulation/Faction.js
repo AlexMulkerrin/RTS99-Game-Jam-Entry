@@ -1,6 +1,6 @@
 const factionID = {neutral:0, player:1, enemy:2};
 
-const factionColours = ["#ff0000","#00ffb3","#ffff00"];
+const factionColours = ["#000000","#00ffb3","#ff0000"];
 
 class Faction {
     constructor(inColour) {
