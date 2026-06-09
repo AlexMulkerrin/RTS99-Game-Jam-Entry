@@ -77,7 +77,7 @@ class Simulation {
     generateFactions() {
         for (let i=0; i<this.numFactions+1; i++) {
             let colour = factionColours[i];
-            let fac = new Faction(colour);
+            let fac = new Faction(colour, this.width, this.height);
             if (i == factionID.player) {
                 // player's faction
                 fac.storage.essence = 100;
@@ -88,6 +88,7 @@ class Simulation {
                 this.generateAgents(i, ENEMY_FORCE_SIZE, "random");
             }
             this.faction.push(fac);
+            this.updateFactionVision(i);
         }
     }
 
@@ -512,6 +513,8 @@ class Simulation {
                 a.inventory[emptySlot] = t.drops.pop();
             }
         }
+
+        this.updateFactionVision(a.faction);
     }
 
     handleAgentAttacking(index) {
@@ -609,6 +612,19 @@ class Simulation {
 
         t.hasAgent = false;
         t.occupant = NONE;
+    }
+
+    updateFactionVision(index) {
+        let fact = this.faction[index];
+        for (let i=0; i<this.agent.length; i++) {
+            let a = this.agent[i];
+
+            if (a.isAlive && a.faction == index) {
+                let range = agentTypes[a.type].vision;
+                fact.vision.updateRadius(a.x,a.y,range);
+                
+            }
+        }
     }
 
 }

@@ -2,6 +2,7 @@ const minimapColourID = {
     water:"#334EAF", grass:"#29991D", concrete:"#cccccc", 
     road:"#434343", wall:"#808080",
 
+    unexplored:"#000000",
     cameraBorder:"#ffffff",
 }
 
@@ -21,6 +22,8 @@ class Minimap {
         this.drawStructures();
         this.drawItemDrops();
         this.drawAgents();
+
+        this.drawFogOfWar();
 
         this.drawCameraBoundaries();
     }
@@ -105,7 +108,22 @@ class Minimap {
         }
     }
 
-    
+    drawFogOfWar() {
+        let sim = this.targetSimulation;
+        let cam = this.targetControl.camera;
+        let fact = sim.faction[cam.viewingFaction];
+
+        this.ctx.fillStyle = minimapColourID.unexplored;
+        for (let i=0; i<fact.vision.width; i++) {
+            for (let j=0; j<fact.vision.height; j++) {
+                let vis = fact.vision.map[i][j];
+
+                if (vis == NONE) {
+                    this.ctx.fillRect(i,j,1,1);
+                }
+            }
+        }
+    }
 
     drawCameraBoundaries() {
         let cam = this.targetControl.camera;

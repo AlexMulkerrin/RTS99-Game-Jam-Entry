@@ -2,6 +2,8 @@ const colourID = {
     textDark:"#444499", borders:"#8FB1C9",
     hovered:"#d1d1fe", hoveredEnemy:"#ff0000", selected:"#00ff00",
 
+    unexplored:"#000000",
+
     projectile:"#ffffff",
     healthBar:"#00ff00", healthBarEmpty:"#ff0000",
 };
@@ -57,6 +59,8 @@ class MainView {
         this.drawAgents();
         this.drawProjectiles();
 
+        this.drawFogOfWar();
+
         this.drawBorders();
         this.drawResourceStats();
         this.drawSelectionStats();
@@ -71,15 +75,15 @@ class MainView {
 
     drawTerrain() {
         let sim = this.targetSimulation;
-        let ctrl = this.targetControl;
+        let cam = this.targetControl.camera;
 
-        for (let i=0; i<ctrl.camera.width; i++) {
-            for (let j=0; j<ctrl.camera.height; j++) {
+        for (let i=0; i<cam.width; i++) {
+            for (let j=0; j<cam.height; j++) {
                 let x = i*this.sqSize+this.viewOffsetX;
                 let y = j*this.sqSize+this.viewOffsetY;
 
-                let nx = i + ctrl.camera.x;
-                let ny = j + ctrl.camera.y;
+                let nx = i + cam.x;
+                let ny = j + cam.y;
                 let t = sim.terrain[nx][ny];
 
                 if (t.type == tileID.grass || t.type == tileID.water) {
@@ -307,6 +311,30 @@ class MainView {
                 }
             }
 
+        }
+    }
+
+    drawFogOfWar() {
+        let sim = this.targetSimulation;
+        let cam = this.targetControl.camera;
+        let fact = sim.faction[cam.viewingFaction];
+
+        this.ctx.fillStyle = colourID.unexplored;
+        // TODO make tiles for unexplored areas.
+
+        for (let i=0; i<cam.width; i++) {
+            for (let j=0; j<cam.height; j++) {
+                let x = i*this.sqSize+this.viewOffsetX;
+                let y = j*this.sqSize+this.viewOffsetY;
+
+                let nx = i + cam.x;
+                let ny = j + cam.y;
+                let vis = fact.vision.map[nx][ny];
+
+                if (vis == NONE) {
+                    this.ctx.fillRect(x, y, this.sqSize, this.sqSize); 
+                }
+            }
         }
     }
 

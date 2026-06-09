@@ -16,8 +16,9 @@ class Control {
         this.currentTool = 0; //  road
 
         this.camera = new Camera();
-        this.camera.x = 5;
-        this.camera.y = 15;
+        this.randomiseCamera();
+        //this.camera.x = 5;
+        //this.camera.y = 15;
 
         let t = this;
 
@@ -241,6 +242,15 @@ class Control {
         }
     }
 
+    randomiseCamera() {
+        let sim = this.targetSimulation;
+        let cam = this.camera;
+
+        cam.x = random(sim.width - cam.width);
+        cam.y = random(sim.height - cam.height);
+        
+    }
+
     moveCamera(dx,dy) {
         let sim = this.targetSimulation;
         let cam = this.camera;
@@ -353,6 +363,8 @@ class Camera {
         this.y = 0;
         this.width = 16;
         this.height = 11;
+
+        this.viewingFaction = factionID.enemy;
 
         this.panDelay = 0;
     }
