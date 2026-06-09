@@ -2,6 +2,7 @@ const colourID = {
     textDark:"#444499", borders:"#8FB1C9",
     hovered:"#d1d1fe", hoveredEnemy:"#ff0000", selected:"#00ff00",
 
+    projectile:"#ffffff",
     healthBar:"#00ff00", healthBarEmpty:"#ff0000",
 };
 
@@ -54,6 +55,7 @@ class MainView {
         this.drawTerrain();
         this.drawStructures(); 
         this.drawAgents();
+        this.drawProjectiles();
 
         this.drawBorders();
         this.drawResourceStats();
@@ -276,6 +278,36 @@ class MainView {
         this.ctx.fillRect(x,y+1,span,1);
         this.ctx.fillStyle = colourID.healthBar;
         this.ctx.fillRect(x+1,y+1,filled,1);
+    }
+
+    drawProjectiles() {
+        let sim = this.targetSimulation;
+        let cam = this.targetControl.camera;
+
+        let centeringOffset = Math.floor(this.sqSize/2);
+
+        this.ctx.fillStyle = colourID.projectile;
+
+        for (let i=0; i<sim.projectile.length; i++) {
+            let p = sim.projectile[i];
+
+            if (p.isAlive) {
+                let progress = p.traveledSoFar/p.distance;
+                let px = p.startX + p.dx*progress;
+                let py = p.startY + p.dy*progress;
+
+                let vx = px - cam.x;
+                let vy = py - cam.y;
+
+                if (cam.isInBounds(vx,vy)) {
+                    let x = Math.floor(vx*this.sqSize) + this.viewOffsetX + centeringOffset;
+                    let y = Math.floor(vy*this.sqSize) + this.viewOffsetY +  + centeringOffset;
+
+                    this.ctx.fillRect(x,y,2,2);
+                }
+            }
+
+        }
     }
 
     drawBorders() {

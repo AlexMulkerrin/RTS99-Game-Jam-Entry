@@ -19,6 +19,7 @@ class Simulation {
         this.structure = [];
 
         this.agent = [];
+        this.projectile = [];
 
         this.numFactions = 2;
         this.faction = [];
@@ -367,6 +368,7 @@ class Simulation {
 
         //if (this.timer%10 == 0) {
             this.updateAgents();
+            this.updateProjectiles();
         //}
         //this.hasMinimapChanged = false;
     }
@@ -510,25 +512,52 @@ class Simulation {
             a.targY = targ.y;
 
             if (a.isInRange() && a.cooldown == 0) {
-                this.dealDamage(a,targ);
-                
-                if (targ.isAlive == false) {
-                    a.state = stateID.idle;
-                }
+                this.fireProjectile(a);
             }
         } else {
             a.state = stateID.idle;
         }
     }
 
-    dealDamage(attacker, defender) {
-        let dam = agentTypes[attacker.type].damage;
-        defender.health -= dam;
-        attacker.cooldown = agentTypes[attacker.type].cooldown;
-        // TODO track ammunition
+    fireProjectile(a) {
+        let dam = agentTypes[a.type].damage;
+        let spd = agentTypes[a.type].projectileSpeed;
 
-        if (defender.health<=0) {
-            this.killAgent(defender);
+        let proj = new Projectile(
+            dam, a.targID, a.x, a.y, 
+            a.targX, a.targY, spd);
+
+        a.cooldown = agentTypes[a.type].cooldown;
+        // TODO track ammunition
+        this.projectile.push(proj);
+    }
+
+    updateProjectiles() {
+        for (let i=0; i<this.projectile.length; i++) {
+            let p = this.projectile[i];
+
+            if (p.isAlive) {
+                p.traveledSoFar += p.speed;
+
+                if (p.traveledSoFar >= p.distance) {
+                    let t = this.terrain[p.endX][p.endY];
+
+                    if (t.hasAgent && t.occupant == p.targID) {
+                        this.dealDamage(p.damage, p.targID);
+                    }
+
+                    p.isAlive = false;
+                }
+            }
+        }
+    }
+
+    dealDamage(damage, targID) {
+        let targ = this.agent[targID];
+        targ.health -= damage;
+    
+        if (targ.health <= 0) {
+            this.killAgent(targ);
         }
     }
 
@@ -559,5 +588,27 @@ class Item {
     constructor(inType, inQuantity) {
         this.type = inType;
         this.quantity = inQuantity;
+    }
+}
+
+class Projectile {
+    constructor(inDamage, inTargetID, inStartX, inStartY, inEndX, inEndY, inSpeed) {
+        this.damage = inDamage;
+        this.targID = inTargetID;
+
+        this.startX = inStartX;
+        this.startY = inStartY;
+
+        this.endX = inEndX;
+        this.endY = inEndY;
+
+        this.speed = inSpeed;
+
+        this.dx = this.endX - this.startX;
+        this.dy = this.endY - this.startY;
+        this.distance = Math.sqrt(this.dx*this.dx+this.dy*this.dy);
+        this.traveledSoFar = 0;
+
+        this.isAlive = true;
     }
 }
