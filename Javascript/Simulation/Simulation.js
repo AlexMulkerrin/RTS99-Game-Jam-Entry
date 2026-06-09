@@ -428,7 +428,8 @@ class Simulation {
                 let ny = a.y + direcDelta[a.rotation][1];
 
                 if (this.isInBounds(nx,ny) 
-                    && this.terrain[nx][ny].occupant == NONE) {
+                    && this.terrain[nx][ny].occupant == NONE
+                    && this.terrain[nx][ny].type != tileID.water) {
                 
                     a.newX = nx;
                     a.newY = ny;
