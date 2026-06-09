@@ -93,7 +93,12 @@ class Control {
         } else if (m.whichButton == mouseButtonID.right) {
             if (m.isOverGrid) {
                 if (m.selectedType == entityTypeID.agent) {
-                    sim.sendMoveCommand(m.gridX,m.gridY,m.selectedIndex);
+
+                    if (m.hoveredIsEnemy) {
+                        sim.sendAttackCommand(m.selectedIndex,m.hoveredIndex);
+                    } else {
+                        sim.sendMoveCommand(m.gridX,m.gridY,m.selectedIndex);
+                    }
                 }
             } else if (m.isOverMinimap) {
                 if (m.selectedType == entityTypeID.agent) {
@@ -123,7 +128,7 @@ class Control {
 
                 
                 
-            } else if (m.whichButton == mouseButtonID.left) {
+            } else if (m.whichButton == mouseButtonID.right) {
 
             }
         }
@@ -210,6 +215,7 @@ class Control {
         let t = sim.terrain[m.gridX][m.gridY];
 
         m.hoveredType = entityTypeID.none;
+        m.hoveredIsEnemy = false;
 
         if (t.hasStructure) {
             m.hoveredType = entityTypeID.structure;
@@ -217,7 +223,22 @@ class Control {
         } else if (t.hasAgent) {
             m.hoveredType = entityTypeID.agent;
             m.hoveredIndex = t.occupant;
-        } 
+
+            if (m.selectedType != entityTypeID.none) {
+                let ownFact;
+                if (m.selectedType == entityTypeID.agent) {
+                    ownFact = sim.agent[m.selectedIndex].faction;
+                } else {
+                    // is structure
+                    ownFact = sim.agent[m.selectedIndex].faction;
+                }
+                let otherFact = sim.agent[m.hoveredIndex].faction;
+
+                if (ownFact != otherFact) {
+                    m.hoveredIsEnemy = true;
+                }
+            }
+        }
     }
 
     moveCamera(dx,dy) {
@@ -315,6 +336,7 @@ class Mouse {
 
         this.hoveredType = entityTypeID.none;
         this.hoveredIndex = NONE;
+        this.hoveredIsEnemy = false;
 
         this.selectedType = entityTypeID.none;
         this.selectedIndex = NONE;

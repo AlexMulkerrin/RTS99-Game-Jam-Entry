@@ -1,6 +1,8 @@
 const colourID = {
     textDark:"#444499", borders:"#8FB1C9",
-    hovered:"#d1d1fe", selected:"#00ff00",
+    hovered:"#d1d1fe", hoveredEnemy:"#ff0000", selected:"#00ff00",
+
+    healthBar:"#00ff00", healthBarEmpty:"#ff0000",
 };
 
 class MainView {
@@ -242,6 +244,8 @@ class MainView {
 
                     this.drawAgent(x,y,a.type, a.rotation);
 
+                    this.drawAgentHealthBar(x,y,a);
+
                      // DEBUG
                     this.ctx.fillStyle = sim.faction[a.faction].agentColour;
                     this.ctx.fillRect(x,y,2,2);
@@ -258,6 +262,20 @@ class MainView {
         this.ctx.drawImage(this.agentsImage, 
             tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
             x, y, sqSize, sqSize);
+    }
+    drawAgentHealthBar(x,y,a) {
+        let span = this.sqSize-2;
+
+        let current = a.health;
+        let max = agentTypes[a.type].health;
+
+        let fraction = current/max;
+        let filled = Math.floor(span*fraction);
+
+        this.ctx.fillStyle = colourID.healthBarEmpty;
+        this.ctx.fillRect(x,y+1,span,1);
+        this.ctx.fillStyle = colourID.healthBar;
+        this.ctx.fillRect(x+1,y+1,filled,1);
     }
 
     drawBorders() {
@@ -351,7 +369,12 @@ class MainView {
 
         } else if (m.hoveredType == entityTypeID.agent) {
             let a = sim.agent[m.hoveredIndex];
-            this.drawBoundingBox(a.x,a.y,1,colourID.hovered);
+
+            if (m.hoveredIsEnemy) {
+                this.drawBoundingBox(a.x,a.y,1,colourID.hoveredEnemy);
+            } else {
+                this.drawBoundingBox(a.x,a.y,1,colourID.hovered);
+            }
         }
 
         if (m.selectedType == entityTypeID.structure) {

@@ -355,6 +355,13 @@ class Simulation {
         a.state = stateID.movingToLocation;
     }
 
+    sendAttackCommand(attackerIndex, targetIndex) {
+        let a = this.agent[attackerIndex];
+
+        a.state = stateID.attacking;
+        a.targID = targetIndex;
+    }
+
     update() {
         this.timer++;
 
@@ -372,9 +379,11 @@ class Simulation {
                     this.handleAgentWander(i);
                 } else if (a.state == stateID.movingToLocation) {
                     this.handleAgentMovingToLocation(i);
+                } else if (a.state == stateID.attacking) {
+                    this.handleAgentAttacking(i);
                 }
-                //a.rotation++;
-                //if (a.rotation>7) a.rotation = 0;
+                
+                if (a.cooldown>0) a.cooldown--;
             }
         }
     }
@@ -471,8 +480,6 @@ class Simulation {
             }
 
         }
-
-
     }
 
     handleAgentOnNewTile(index) {
@@ -492,8 +499,45 @@ class Simulation {
                 a.inventory[emptySlot] = t.drops.pop();
             }
         }
+    }
 
+    handleAgentAttacking(index) {
+        let a = this.agent[index];
+        let targ = this.agent[a.targID];
 
+        if (targ.isAlive) {
+            a.targX = targ.x;
+            a.targY = targ.y;
+
+            if (a.isInRange() && a.cooldown == 0) {
+                this.dealDamage(a,targ);
+                
+                if (targ.isAlive == false) {
+                    a.state = stateID.idle;
+                }
+            }
+        } else {
+            a.state = stateID.idle;
+        }
+    }
+
+    dealDamage(attacker, defender) {
+        let dam = agentTypes[attacker.type].damage;
+        defender.health -= dam;
+        attacker.cooldown = agentTypes[attacker.type].cooldown;
+        // TODO track ammunition
+
+        if (defender.health<=0) {
+            this.killAgent(defender);
+        }
+    }
+
+    killAgent(a) {
+        a.isAlive = false;
+        let t = this.terrain[a.x][a.y];
+
+        t.hasAgent = false;
+        t.occupant = NONE;
     }
 
 }
