@@ -3,7 +3,7 @@ const colourID = {
 
     button:"#FFD800", buttonLight:"#fff098", buttonShade:"#c1a402", buttonHighlight:"#fff5bb",
 
-    hovered:"#d1d1fe", hoveredEnemy:"#ff0000", selected:"#00ff00",
+    hovered:"#d1d1fe", hoveredEnemy:"#ff0000", selected:"#00ff00", buildingSite:"#7979ff",
 
     unexplored:"#000000",
 
@@ -451,8 +451,13 @@ class MainView {
 
     drawCursor() {
         let sim = this.targetSimulation;
-        let m = this.targetControl.mouse;
+        let ctrl = this.targetControl;
+        let m = ctrl.mouse;
         this.ctx.drawImage(this.cursorsImage,m.x,m.y);
+
+        if (ctrl.interactionMode == interactionModeID.building && m.isOverGrid) {
+            this.drawBoundingBox(m.gridX,m.gridY,1,colourID.buildingSite);
+        }
 
         
         if (m.hoveredType == entityTypeID.structure) {

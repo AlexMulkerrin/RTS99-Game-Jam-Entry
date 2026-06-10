@@ -4,8 +4,8 @@ const entityTypeID = {none:0, structure:1, agent:2};
 
 const interactionModeID = {commanding:0, building:1}
 
-const toolID = {none:0, concrete:1, road:2};
-const tools = ["none","concrete","road"];
+const toolID = {none:0, concrete:1, road:2, wall:3, portal:4};
+const tools = ["none","concrete","road","wall","portal"];
 /*
 const toolID = {concrete:0, road:1, wall:2, small:3, medium:4, large:5, removeStructure:6, robot:7, rover:8};
 const tools = ["concrete","road","wall","1x1 building","2x2 building","3x3 building","remove structure","add robot", "add rover"];
@@ -14,6 +14,8 @@ const tools = ["concrete","road","wall","1x1 building","2x2 building","3x3 build
 const toolTypes = [
     {name:"concrete", tooltip:"build concrete cost: 1 concrete", function:"setTool", funcArgs:toolID.concrete},
     {name:"road", tooltip:"build road cost: 2 concrete", function:"setTool", funcArgs:toolID.road},
+    {name:"wall", tooltip:"build wall cost: 4 concrete", function:"setTool", funcArgs:toolID.wall},
+    {name:"portal", tooltip:"deploy portal", function:"setTool", funcArgs:toolID.portal},
 ];
 
 class Control {
@@ -153,8 +155,8 @@ class Control {
                 if (this.interactionMode == interactionModeID.building) {
                     this.handleToolUse();
                 } else if (this.interactionMode == interactionModeID.commanding) {
-                    m.selectedType = entityTypeID.none;
-                    this.createButtons();
+                    //m.selectedType = entityTypeID.none;
+                    //this.createButtons();
                 }
 
             } else if (m.isOverMinimap) {
@@ -197,14 +199,17 @@ class Control {
                     if (m.hoveredType == entityTypeID.structure) {
                         m.selectedType = entityTypeID.structure;
                         m.selectedIndex = m.hoveredIndex;
-                        this.createButtons();
 
                     } else if (m.hoveredType == entityTypeID.agent) {
                         m.selectedType = entityTypeID.agent;
                         m.selectedIndex = m.hoveredIndex;
-                        this.createButtons();
-
+                        
+                    } else if (m.hoveredType == entityTypeID.none) {
+                        m.selectedType = entityTypeID.none;
                     }
+                    
+                    this.createButtons();
+                    
                 } else if (this.interactionMode == interactionModeID.building){
                     this.handleToolUse();
                 }
@@ -275,6 +280,10 @@ class Control {
             case toolID.wall:
                 sim.tryPlaceStructure(m.gridX, m.gridY,structureID.wall, f);
                 break;
+            case toolID.portal:
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.portal, f);
+                break;
+            /*
             case toolID.small:
                 sim.tryPlaceStructure(m.gridX, m.gridY,structureID.silo, f);
                 break;
@@ -293,6 +302,7 @@ class Control {
             case toolID.rover:
                 sim.tryAddAgent(m.gridX,m.gridY, agentID.rover, f);
                 break;
+            */
         }
     }
 
