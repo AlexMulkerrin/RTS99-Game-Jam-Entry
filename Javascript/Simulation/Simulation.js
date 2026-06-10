@@ -1,3 +1,5 @@
+const gameStateID = {ingame:0, gameOver:1};
+
 const tileID = {water:0, grass:1, concrete:2, road:3};
 
 const itemID = {essence:0};
@@ -14,6 +16,8 @@ const ENEMY_FORCE_SIZE = 10;
 class Simulation {
     constructor() {
         this.timer = 0;
+        this.gameState = gameStateID.ingame;
+        this.hasFogOfWar = false;
 
         this.width = 64;
         this.height = 64;

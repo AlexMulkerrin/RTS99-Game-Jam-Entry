@@ -110,16 +110,19 @@ class Minimap {
 
     drawFogOfWar() {
         let sim = this.targetSimulation;
-        let cam = this.targetControl.camera;
-        let fact = sim.faction[cam.viewingFaction];
 
-        this.ctx.fillStyle = minimapColourID.unexplored;
-        for (let i=0; i<fact.vision.width; i++) {
-            for (let j=0; j<fact.vision.height; j++) {
-                let vis = fact.vision.map[i][j];
+        if (sim.hasFogOfWar) {
+            let cam = this.targetControl.camera;
+            let fact = sim.faction[cam.viewingFaction];
 
-                if (vis == NONE) {
-                    this.ctx.fillRect(i,j,1,1);
+            this.ctx.fillStyle = minimapColourID.unexplored;
+            for (let i=0; i<fact.vision.width; i++) {
+                for (let j=0; j<fact.vision.height; j++) {
+                    let vis = fact.vision.map[i][j];
+
+                    if (vis == NONE) {
+                        this.ctx.fillRect(i,j,1,1);
+                    }
                 }
             }
         }

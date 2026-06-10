@@ -316,23 +316,26 @@ class MainView {
 
     drawFogOfWar() {
         let sim = this.targetSimulation;
-        let cam = this.targetControl.camera;
-        let fact = sim.faction[cam.viewingFaction];
 
-        this.ctx.fillStyle = colourID.unexplored;
-        // TODO make tiles for unexplored areas.
+        if (sim.hasFogOfWar) {
+            let cam = this.targetControl.camera;
+            let fact = sim.faction[cam.viewingFaction];
 
-        for (let i=0; i<cam.width; i++) {
-            for (let j=0; j<cam.height; j++) {
-                let x = i*this.sqSize+this.viewOffsetX;
-                let y = j*this.sqSize+this.viewOffsetY;
+            this.ctx.fillStyle = colourID.unexplored;
+            // TODO make tiles for unexplored areas.
 
-                let nx = i + cam.x;
-                let ny = j + cam.y;
-                let vis = fact.vision.map[nx][ny];
+            for (let i=0; i<cam.width; i++) {
+                for (let j=0; j<cam.height; j++) {
+                    let x = i*this.sqSize+this.viewOffsetX;
+                    let y = j*this.sqSize+this.viewOffsetY;
 
-                if (vis == NONE) {
-                    this.ctx.fillRect(x, y, this.sqSize, this.sqSize); 
+                    let nx = i + cam.x;
+                    let ny = j + cam.y;
+                    let vis = fact.vision.map[nx][ny];
+
+                    if (vis == NONE) {
+                        this.ctx.fillRect(x, y, this.sqSize, this.sqSize); 
+                    }
                 }
             }
         }
