@@ -62,12 +62,14 @@ class Control {
         if (sim.gameState == gameStateID.inGame) {
             if (m.selectedType == entityTypeID.none) {
                 this.makeBuildButtons();
+            } else if (m.selectedType == entityTypeID.structure) {
+                this.makeStructureButtons();
             }
         }
     }
 
     makeBuildButtons() {
-        let x = 256
+        let x = 256;
         let y = 80;
         let size = 16;
 
@@ -82,6 +84,28 @@ class Control {
                 y +=size;
             }
         }
+    }
+
+    makeStructureButtons() {
+        let sim = this.targetSimulation;
+        let m = this.mouse;
+
+        let s = sim.structure[m.selectedIndex];
+        let stats = structureTypes[s.type];
+
+        if (stats.builds) {
+            let x =256;
+            let y = 80;
+            let size = 16;
+
+            let agentType = stats.builds[0];
+            let b = new Button(x,y,size,size, "robot", "build robot for 10 essence", "handleBuildUnit", agentID.robot);
+            this.button.push(b);
+        }
+
+        
+
+        
     }
 
     handleMouseMove(event) {
@@ -304,6 +328,18 @@ class Control {
                 break;
             */
         }
+    }
+
+    handleBuildUnit(agentIndex) {
+        let sim = this.targetSimulation;
+        let m = this.mouse;
+        let f = factionID.player;
+        let struc = sim.structure[m.selectedIndex];
+        let stats = structureTypes[struc.type];
+
+        let x = struc.x + stats.exit.x;
+        let y = struc.y + stats.exit.y;
+        sim.tryAddAgent(x,y, agentID.robot, f);
     }
 
     checkHover() {
