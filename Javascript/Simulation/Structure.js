@@ -11,7 +11,8 @@ const structureID = {
 };
 
 const structureTypes = [
-    {name:"portal Tier 0",size:3,tileIndex:0, invSlots:8, maxStack:100},
+    {name:"portal Tier 0",size:3,tileIndex:0, invSlots:8, maxStack:100, 
+        cost:{concrete:9, metal:10}},
     {name:"barracks Tier 0",size:2,tileIndex:0, invSlots:4, maxStack:20},
     {name:"portal Tier 1",size:3,tileIndex:1, invSlots:8, maxStack:200},
     {name:"barracks Tier 1",size:2,tileIndex:1, invSlots:4, maxStack:20},
@@ -39,7 +40,8 @@ const structureTypes = [
     {name:"sandbags",size:1,tileIndex:1, invSlots:0, maxStack:0},
     {name:"chain link fence",size:1,tileIndex:2, invSlots:0, maxStack:0},
     {name:"wooden wall",size:1,tileIndex:3, invSlots:0, maxStack:0},
-    {name:"concrete wall",size:1,tileIndex:4, invSlots:0, maxStack:0},
+    {name:"concrete wall",size:1,tileIndex:4, invSlots:0, maxStack:0, 
+        cost:{concrete:5}},
     
     {name:"turret emplacement",size:1,tileIndex:5, invSlots:0, maxStack:0},
     {name:"turret tower",size:1,tileIndex:6, invSlots:0, maxStack:0},

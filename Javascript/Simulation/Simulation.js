@@ -209,6 +209,10 @@ class Simulation {
     }
 
     tryPlaceStructure(x,y,type,faction) {
+        if (this.hasResources("structure",type,faction) != true) {
+            return false;
+        }
+
         let struc = new Structure(x,y,type,faction);
 
         let isValid = true;
@@ -255,6 +259,55 @@ class Simulation {
 
             this.structure.push(struc);
             this.updateStructureVariations(struc.x,struc.y);
+
+            this.deductResources("structure",type,faction);
+        }
+    }
+
+    hasResources(kind, type, factionIndex) {
+        let cost;
+        if (kind == "structure") {
+            cost = structureTypes[type].cost;
+        } else {
+            return false;
+        }
+
+        let storage = this.faction[factionIndex].storage;
+        if (cost.essence) {
+            if (cost.essence > storage.essence) return false;
+        }
+        if (cost.concrete) {
+            if (cost.concrete > storage.concrete) return false;
+        }
+         if (cost.metal) {
+            if (cost.metal > storage.metal) return false;
+        }
+         if (cost.fuel) {
+            if (cost.fuel > storage.fuel) return false;
+        }
+        return true;
+    }
+
+    deductResources(kind, type, factionIndex) {
+        let cost;
+        if (kind == "structure") {
+            cost = structureTypes[type].cost;
+        } else {
+            return false;
+        }
+
+        let storage = this.faction[factionIndex].storage;
+        if (cost.essence) {
+            storage.essence -= cost.essence;
+        }
+        if (cost.concrete) {
+            storage.concrete -= cost.concrete;
+        }
+         if (cost.metal) {
+            storage.metal -= cost.metal;
+        }
+         if (cost.fuel) {
+            storage.fuel -= cost.fuel;
         }
     }
 
