@@ -1,5 +1,8 @@
 const colourID = {
     textDark:"#444499", borders:"#8FB1C9",
+
+    button:"#FFD800", buttonLight:"#fff098", buttonShade:"#c1a402", buttonHighlight:"#fff5bb",
+
     hovered:"#d1d1fe", hoveredEnemy:"#ff0000", selected:"#00ff00",
 
     unexplored:"#000000",
@@ -62,6 +65,7 @@ class MainView {
         this.drawFogOfWar();
 
         this.drawBorders();
+        this.drawButtons();
         this.drawResourceStats();
         this.drawSelectionStats();
 
@@ -347,6 +351,31 @@ class MainView {
         this.ctx.fillRect(0,0,this.c.width,this.sqSize);
         this.ctx.fillRect(this.c.width-64,0,64,this.c.height);
         this.ctx.fillRect(0,this.c.height-8,this.c.width, 8);
+    }
+
+    drawButtons() {
+        let ctrl = this.targetControl;
+        for (let i=0; i<ctrl.button.length; i++) {
+            let b = ctrl.button[i];
+
+            this.ctx.fillStyle = colourID.buttonShade;
+            this.ctx.fillRect(b.x,b.y,b.width,b.height);
+
+            this.ctx.fillStyle = colourID.buttonLight;
+            this.ctx.fillRect(b.x,b.y,b.width-1,b.height-1);
+
+            if (ctrl.mouse.hoveredButton == i) {
+                this.ctx.fillStyle = colourID.buttonHighlight;
+            } else {
+                this.ctx.fillStyle = colourID.button;
+            }
+            this.ctx.fillRect(b.x+1, b.y+1, b.width-2, b.height-2);
+
+            this.ctx.fillStyle = colourID.textDark;
+            this.ctx.font = "bold 8px sans-serif";
+            let out = b.text[0];
+            this.ctx.fillText(out, b.x+5,b.y+10)
+        }
     }
 
     drawResourceStats() {

@@ -2,18 +2,33 @@ const mouseButtonID = {left:1, middle:2, right:3};
 
 const entityTypeID = {none:0, structure:1, agent:2};
 
+const interactionModeID = {commanding:0, building:1}
+
+const toolID = {none:0, concrete:1, road:2};
+const tools = ["none","concrete","road"];
+/*
 const toolID = {concrete:0, road:1, wall:2, small:3, medium:4, large:5, removeStructure:6, robot:7, rover:8};
 const tools = ["concrete","road","wall","1x1 building","2x2 building","3x3 building","remove structure","add robot", "add rover"];
+*/
+
+const toolTypes = [
+    {name:"concrete", tooltip:"build concrete cost: 1 concrete", function:"setTool", funcArgs:toolID.concrete},
+    {name:"road", tooltip:"build road cost: 2 concrete", function:"setTool", funcArgs:toolID.road},
+];
 
 class Control {
     constructor(inSimulation) {
         this.targetSimulation = inSimulation;
         this.targetDisplay = {};
 
-        this.c = document.getElementById("displayCanvas")
+        this.c = document.getElementById("displayCanvas");
 
         this.mouse = new Mouse();
-        this.currentTool = 0; //  road
+        this.interactionMode = interactionModeID.commanding;
+        this.currentTool = toolID.none;
+
+        this.button = [];
+        this.createButtons();
 
         this.camera = new Camera();
         this.focusCameraOnUnit(0);
@@ -34,6 +49,37 @@ class Control {
         this.c.addEventListener("wheel", function(e){t.handleMouseWheel(e); return false;});
 
         window.addEventListener("keydown", function(e){t.handleKeyDown(e)})
+    }
+
+    createButtons() {
+        let sim = this.targetSimulation;
+        let m = this.mouse;
+
+        this.button = [];
+
+        if (sim.gameState == gameStateID.inGame) {
+            if (m.selectedType == entityTypeID.none) {
+                this.makeBuildButtons();
+            }
+        }
+    }
+
+    makeBuildButtons() {
+        let x = 256
+        let y = 80;
+        let size = 16;
+
+        for (let i=0; i<toolTypes.length; i++) {
+            let tool = toolTypes[i];
+            let b = new Button(x,y,size,size, tool.name, tool.tooltip, tool.function, tool.funcArgs);
+            this.button.push(b);
+
+            x +=size;
+            if (x>320) {
+                x = 256;
+                y +=size;
+            }
+        }
     }
 
     handleMouseMove(event) {
@@ -58,7 +104,9 @@ class Control {
             m.gridX = gx + cam.x;
             m.gridY = gy + cam.y;
 
-            this.checkHover();
+            if (this.interactionMode == interactionModeID.commanding) {
+                this.checkHover();
+            }
 
         } else {
             m.isOverGrid = false;
@@ -81,6 +129,15 @@ class Control {
                 this.centerCamera(m.miniX,m.miniY);
             }
         }
+
+        m.hoveredButton = NONE;
+        for (let i=0; i<this.button.length; i++) {
+            let b = this.button[i];
+            if (b.isInBounds(m.x,m.y)) {
+                m.hoveredButton = i;
+            }
+        }
+
     }
     handleMouseDown(event) {
         let sim = this.targetSimulation;
@@ -91,16 +148,36 @@ class Control {
         m.oldX = m.x;
         m.oldY = m.y;        
 
-        if (m.whichButton == mouseButtonID.left && m.isOverMinimap) {
-            this.centerCamera(m.miniX,m.miniY);
+        if (m.whichButton == mouseButtonID.left) {
+            if (m.isOverGrid) {
+                if (this.interactionMode == interactionModeID.building) {
+                    this.handleToolUse();
+                } else if (this.interactionMode == interactionModeID.commanding) {
+                    m.selectedType = entityTypeID.none;
+                    this.createButtons();
+                }
+
+            } else if (m.isOverMinimap) {
+                this.centerCamera(m.miniX,m.miniY);
+
+            } else if (m.hoveredButton != NONE) {
+                let b = this.button[m.hoveredButton];
+                this[b.function](b.functionArguments);
+            }
+
         } else if (m.whichButton == mouseButtonID.right) {
             if (m.isOverGrid) {
-                if (m.selectedType == entityTypeID.agent) {
+                if (this.interactionMode == interactionModeID.building) {
+                    this.setTool(toolID.none);
+                    this.interactionMode = interactionModeID.commanding;
+                } else if (this.interactionMode == interactionModeID.commanding) {
+                    if (m.selectedType == entityTypeID.agent) {
 
-                    if (m.hoveredIsEnemy) {
-                        sim.sendAttackCommand(m.selectedIndex,m.hoveredIndex);
-                    } else {
-                        sim.sendMoveCommand(m.gridX,m.gridY,m.selectedIndex);
+                        if (m.hoveredIsEnemy) {
+                            sim.sendAttackCommand(m.selectedIndex,m.hoveredIndex);
+                        } else {
+                            sim.sendMoveCommand(m.gridX,m.gridY,m.selectedIndex);
+                        }
                     }
                 }
             } else if (m.isOverMinimap) {
@@ -116,16 +193,19 @@ class Control {
         if (m.isOverGrid) {
             if (m.whichButton == mouseButtonID.left) {
 
-                if (this.currentTool == toolID.removeStructure) {
-                    // don't try selecting if you're deleting things.
-                    this.handleToolUse();
-                } else if (m.hoveredType == entityTypeID.structure) {
-                    m.selectedType = entityTypeID.structure;
-                    m.selectedIndex = m.hoveredIndex;
-                } else if (m.hoveredType == entityTypeID.agent) {
-                    m.selectedType = entityTypeID.agent;
-                    m.selectedIndex = m.hoveredIndex;
-                } else {
+                if (this.interactionMode == interactionModeID.commanding) {
+                    if (m.hoveredType == entityTypeID.structure) {
+                        m.selectedType = entityTypeID.structure;
+                        m.selectedIndex = m.hoveredIndex;
+                        this.createButtons();
+
+                    } else if (m.hoveredType == entityTypeID.agent) {
+                        m.selectedType = entityTypeID.agent;
+                        m.selectedIndex = m.hoveredIndex;
+                        this.createButtons();
+
+                    }
+                } else if (this.interactionMode == interactionModeID.building){
                     this.handleToolUse();
                 }
 
@@ -173,6 +253,11 @@ class Control {
                 break;
             
         }
+    }
+
+    setTool(id) {
+        this.currentTool = id;
+        this.interactionMode = interactionModeID.building;
     }
 
     handleToolUse() {
@@ -365,6 +450,8 @@ class Mouse {
         this.isOverMinimap = false;
         this.miniX = 0;
         this.miniY = 0;
+
+        this.hoveredButton = NONE;
     }
 }
 
@@ -400,5 +487,29 @@ class Camera {
         } else {
             return false;
         }
+    }
+}
+
+class Button {
+    constructor(inX, inY, inWidth, inHeight, inText, inTooltip, inFunction, inFuncArgs) {
+        this.x = inX;
+        this.y = inY;
+        this.width = inWidth;
+        this.height = inHeight;
+        
+        this.text = inText;
+        this.tooltip = inTooltip;
+        this.function = inFunction;
+        this.functionArguments = inFuncArgs;
+    }
+
+    isInBounds(x,y) {
+        if (x >= this.x && x<= this.x + this.width 
+            && y >= this.y && y <= this.y + this.height) {
+            return true;
+        } else {
+            return false;
+        }
+         
     }
 }

@@ -1,4 +1,4 @@
-const gameStateID = {ingame:0, gameOver:1};
+const gameStateID = {inGame:0, gameOver:1};
 const winStateID = {undecided:0, playerWon:1, enemyWon:2, draw:3};
 
 const tileID = {water:0, grass:1, concrete:2, road:3};
@@ -20,8 +20,8 @@ class Simulation {
         this.isDebugModeOn = false;
 
         this.timer = 0;
-        this.gameState = gameStateID.ingame;
-        this.hasFogOfWar = false;
+        this.gameState = gameStateID.inGame;
+        this.hasFogOfWar = true;
         this.winState = winStateID.undecided;
 
         this.width = 64;
