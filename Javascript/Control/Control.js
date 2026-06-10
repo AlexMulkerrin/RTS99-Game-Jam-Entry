@@ -16,7 +16,9 @@ class Control {
         this.currentTool = 0; //  road
 
         this.camera = new Camera();
-        this.randomiseCamera();
+        this.focusCameraOnUnit(0);
+
+        //this.randomiseCamera();
         //this.camera.x = 5;
         //this.camera.y = 15;
 
@@ -251,6 +253,15 @@ class Control {
         
     }
 
+    focusCameraOnUnit(index) {
+        let sim = this.targetSimulation;
+        let cam = this.camera;
+        let a = sim.agent[index];
+
+        this.centerCamera(a.x,a.y);
+
+    }
+
     moveCamera(dx,dy) {
         let sim = this.targetSimulation;
         let cam = this.camera;
@@ -364,7 +375,7 @@ class Camera {
         this.width = 16;
         this.height = 11;
 
-        this.viewingFaction = factionID.enemy;
+        this.viewingFaction = factionID.player;
 
         this.panDelay = 0;
     }

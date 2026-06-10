@@ -1,4 +1,5 @@
 const gameStateID = {ingame:0, gameOver:1};
+const winStateID = {undecided:0, playerWon:1, enemyWon:2, draw:3};
 
 const tileID = {water:0, grass:1, concrete:2, road:3};
 
@@ -11,13 +12,17 @@ const itemTypes = [
 const WATER_RARITY = 20; // TODO use this in terrain generator
 const ESSENCE_RARITY = 80;
 
-const ENEMY_FORCE_SIZE = 10;
+const ENEMY_FORCE_SIZE = 1;
+const PLAYER_FORCE_SIZE = 1;
 
 class Simulation {
     constructor() {
+        this.isDebugModeOn = false;
+
         this.timer = 0;
         this.gameState = gameStateID.ingame;
         this.hasFogOfWar = false;
+        this.winState = winStateID.undecided;
 
         this.width = 64;
         this.height = 64;
@@ -88,8 +93,10 @@ class Simulation {
                 fac.storage.concrete = 50;
                 fac.storage.metal = 20;
                 fac.storage.fuel = 80;
+                this.generateAgents(i, PLAYER_FORCE_SIZE, "central");
+
             } else if (i == factionID.enemy) {
-                this.generateAgents(i, ENEMY_FORCE_SIZE, "random");
+                this.generateAgents(i, ENEMY_FORCE_SIZE, "central");
             }
             this.faction.push(fac);
             this.updateFactionVision(i);
@@ -98,8 +105,8 @@ class Simulation {
 
     generateAgents(faction, number, mode) {
         for (let i=0; i<number; i++) {
+            let isPlaced = false;
             if (mode == "random") {
-                let isPlaced = false;
                 while (isPlaced == false) {
                     let x = random(this.width);
                     let y = random(this.height);
@@ -107,6 +114,15 @@ class Simulation {
                     isPlaced = this.tryAddAgent(x,y,agentID.robot, faction);
                 }
                 
+            } else if (mode == "central") {
+                while (isPlaced == false) {
+                    let span = Math.floor(this.width/4);
+                    let offset = (Math.floor((this.width-span)/2));
+                    let x = random(span)+offset;
+                    let y = random(span)+offset;
+
+                    isPlaced = this.tryAddAgent(x,y,agentID.robot, faction);
+                }
             }
         }
     }
@@ -385,6 +401,8 @@ class Simulation {
         //if (this.timer%10 == 0) {
             this.updateAgents();
             this.updateProjectiles();
+
+            this.updateFactions();
         //}
         //this.hasMinimapChanged = false;
     }
@@ -628,6 +646,66 @@ class Simulation {
                 fact.vision.updateRadius(a.x,a.y,range);
                 
             }
+        }
+    }
+
+    updateFactions() {
+        for (let i=0; i<this.faction.length; i++) {
+            let fact = this.faction[i];
+
+            if (fact.isAlive) {
+                let isAlive = false;
+                for (let j=0; j<this.agent.length; j++) {
+                    let a = this.agent[j];
+
+                    if (a.isAlive && a.faction == i) {
+                        isAlive = true;
+                        break;
+                    }
+                }
+                if (isAlive == false) {
+                    for (let j=0; j<this.structure.length; j++) {
+                        let s = this.structure[j];
+
+                        if (s.isAlive && s.faction == 1) {
+                            isAlive = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isAlive == false) {
+                    fact.isAlive = false;
+                    this.checkForWin();
+                }
+            }
+        }
+    }
+
+    checkForWin() {
+        let winner = winStateID.undecided;
+        let isOpponentALive = false;
+        for (let i=0; i<this.faction.length; i++) {
+            let fact = this.faction[i];
+
+            if (i == factionID.player) {
+                if  (fact.isAlive == false) {
+                    winner = winStateID.enemyWon;
+                }
+            } else if (fact.isAlive) {
+                isOpponentALive = true;
+            }
+        }
+        if (isOpponentALive == false) {
+            if (winner == winStateID.enemyWon) {
+                winnder = winStateID.draw;
+            } else {
+                winner = winStateID.playerWon;
+            }
+        }
+        if (winner != winStateID.undecided) {
+            this.winState = winner;
+            this.gameState = gameStateID.gameOver;
         }
     }
 

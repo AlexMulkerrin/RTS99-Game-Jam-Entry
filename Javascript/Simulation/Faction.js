@@ -10,6 +10,8 @@ class Faction {
         this.storage = new Storage();
 
         this.vision = new VisionMap(inWidth, inHeight);
+
+        this.isAlive = true;
     }
 
     

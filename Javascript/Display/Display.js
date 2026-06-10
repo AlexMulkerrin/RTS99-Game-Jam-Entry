@@ -52,5 +52,17 @@ class Display {
             out += ", var:"+t.tileVariation;
         }
         this.ctx.fillText(out,10,offY+100);
+
+        let status = sim.winState;
+        if (status == winStateID.enemyWon) {
+            out = "you lost";
+        } else if (status == winStateID.playerWon) {
+            out = "you won";
+        } else if (status == winStateID.draw) {
+            out = "somehow you drew?";
+        } else {
+            out = "undecided";
+        }
+        this.ctx.fillText(out,10,offY+120);
     }
 }
