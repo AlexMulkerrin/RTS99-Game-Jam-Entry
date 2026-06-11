@@ -12,8 +12,10 @@ const structureID = {
 
 const structureTypes = [
     {name:"portal Tier 0",size:3,tileIndex:0, invSlots:8, maxStack:100, 
-        cost:{concrete:9, metal:10}, builds:[agentID.robot], exit:{x:1,y:3}},
-    {name:"barracks Tier 0",size:2,tileIndex:0, invSlots:4, maxStack:20},
+        cost:{concrete:9, metal:10}, isTradeHub:true, exit:{x:1,y:3}},
+    {name:"barracks Tier 0",size:2,tileIndex:0, invSlots:4, maxStack:20,
+        cost:{concrete:4, metal:5}, builds:[agentID.robot], exit:{x:0,y:2}
+    },
     {name:"portal Tier 1",size:3,tileIndex:1, invSlots:8, maxStack:200},
     {name:"barracks Tier 1",size:2,tileIndex:1, invSlots:4, maxStack:20},
     {name:"silo",size:1,tileIndex:0, invSlots:1, maxStack:100},

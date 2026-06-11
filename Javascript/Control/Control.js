@@ -4,8 +4,8 @@ const entityTypeID = {none:0, structure:1, agent:2};
 
 const interactionModeID = {commanding:0, building:1}
 
-const toolID = {none:0, concrete:1, road:2, wall:3, portal:4};
-const tools = ["none","concrete","road","wall","portal"];
+const toolID = {none:0, concrete:1, road:2, wall:3, portal:4, barracks:5};
+const tools = ["none","concrete","road","wall","portal","barracks"];
 /*
 const toolID = {concrete:0, road:1, wall:2, small:3, medium:4, large:5, removeStructure:6, robot:7, rover:8};
 const tools = ["concrete","road","wall","1x1 building","2x2 building","3x3 building","remove structure","add robot", "add rover"];
@@ -16,6 +16,7 @@ const toolTypes = [
     {name:"road", tooltip:"build road cost: 2 concrete", function:"setTool", funcArgs:toolID.road},
     {name:"wall", tooltip:"build wall cost: 4 concrete", function:"setTool", funcArgs:toolID.wall},
     {name:"portal", tooltip:"deploy portal", function:"setTool", funcArgs:toolID.portal},
+    {name:"barracks", tooltip:"build barracks", function:"setTool", funcArgs:toolID.barracks},
 ];
 
 class Control {
@@ -79,7 +80,7 @@ class Control {
             this.button.push(b);
 
             x +=size;
-            if (x>320) {
+            if (x>304) {
                 x = 256;
                 y +=size;
             }
@@ -307,6 +308,9 @@ class Control {
             case toolID.portal:
                 sim.tryPlaceStructure(m.gridX, m.gridY,structureID.portal, f);
                 break;
+            case toolID.barracks:
+                sim.tryPlaceStructure(m.gridX, m.gridY,structureID.barracks, f);
+                break;
             /*
             case toolID.small:
                 sim.tryPlaceStructure(m.gridX, m.gridY,structureID.silo, f);
@@ -339,7 +343,7 @@ class Control {
 
         let x = struc.x + stats.exit.x;
         let y = struc.y + stats.exit.y;
-        sim.tryAddAgent(x,y, agentID.robot, f);
+        sim.tryAddAgent(x,y, agentID.robot, f, false);
     }
 
     checkHover() {

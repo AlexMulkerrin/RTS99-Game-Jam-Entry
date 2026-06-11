@@ -87,6 +87,8 @@ class Simulation {
         for (let i=0; i<this.numFactions+1; i++) {
             let colour = factionColours[i];
             let fac = new Faction(colour, this.width, this.height);
+            this.faction.push(fac);
+
             if (i == factionID.player) {
                 // player's faction
                 fac.storage.essence = 100;
@@ -98,7 +100,7 @@ class Simulation {
             } else if (i == factionID.enemy) {
                 this.generateAgents(i, ENEMY_FORCE_SIZE, "central");
             }
-            this.faction.push(fac);
+            
             this.updateFactionVision(i);
         }
     }
@@ -111,7 +113,7 @@ class Simulation {
                     let x = random(this.width);
                     let y = random(this.height);
 
-                    isPlaced = this.tryAddAgent(x,y,agentID.robot, faction);
+                    isPlaced = this.tryAddAgent(x,y,agentID.robot, faction, true);
                 }
                 
             } else if (mode == "central") {
@@ -268,6 +270,8 @@ class Simulation {
         let cost;
         if (kind == "structure") {
             cost = structureTypes[type].cost;
+        } else if (kind == "agent") {
+            cost = agentTypes[type].cost;
         } else {
             return false;
         }
@@ -292,6 +296,8 @@ class Simulation {
         let cost;
         if (kind == "structure") {
             cost = structureTypes[type].cost;
+        } else if (kind == "agent") {
+            cost = agentTypes[type].cost;
         } else {
             return false;
         }
@@ -418,7 +424,13 @@ class Simulation {
         }
     }
 
-    tryAddAgent(x,y,type,faction) {
+    tryAddAgent(x,y,type,faction,isFree) {
+
+
+        if (isFree == false && this.hasResources("agent",type,faction) != true) {
+            return false;
+        }
+
         let a = new Agent(x,y,type,faction);
         //a.state = stateID.movingToLocation;
 
@@ -427,6 +439,10 @@ class Simulation {
             t.hasAgent = true;
             t.occupant = this.agent.length;
             this.agent.push(a);
+
+            if (isFree == false) {
+                this.deductResources("agent",type,faction);
+            }
             return true
         } else {
             return false;
@@ -720,7 +736,7 @@ class Simulation {
                     for (let j=0; j<this.structure.length; j++) {
                         let s = this.structure[j];
 
-                        if (s.isAlive && s.faction == 1) {
+                        if (s.isAlive && s.faction == i) {
                             isAlive = true;
                             break;
                         }

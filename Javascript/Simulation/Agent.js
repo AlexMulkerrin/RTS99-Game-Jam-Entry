@@ -9,9 +9,11 @@ const agentID = {robot:0, rover:1};
 
 const agentTypes = [
     {name:"robot", turnDelay:10, invSlots:3, maxStack:10, health:40, 
-        damage:5, projectileSpeed:0.2, cooldown:50, range:6, vision:2},
+        damage:5, projectileSpeed:0.2, cooldown:50, range:6, vision:2,
+        cost:{metal:2, fuel:1}},
     {name:"rover", turnDelay:30, invSlots:4, maxStack:40, health:60, 
-        damage:10, projectileSpeed:0.2, cooldown:40, range:11, vision:3},
+        damage:10, projectileSpeed:0.2, cooldown:40, range:11, vision:3,
+        cost:{metal:3, fuel:2}},
 ];
 
 class Agent {
