@@ -51,6 +51,10 @@ class MainView {
 
         this.cursorsImage = new Image();
         this.cursorsImage.src = "Resources/Images/Cursors.png";
+
+        this.fontImage = new Image();
+        this.fontImage.src = "Resources/Images/Font.png";
+        this.fontSize = 6;
     }
 
     refresh() {
@@ -386,13 +390,16 @@ class MainView {
         this.ctx.font = "bold 8px sans-serif";
 
         let out = "";
-        out += "essence: "+storage.essence;
-        out += " | concrete: "+storage.concrete;
-        out += " | metal: "+storage.metal;
-        out += " | fuel: "+storage.fuel;
-        out += " | power load: 50%";
+        out += "essence:"+padNumber(storage.essence,3);
+        out += " concrete:"+padNumber(storage.concrete,3);
+        out += " metal:"+padNumber(storage.metal,3);
+        
 
-        this.ctx.fillText(out,4,11);
+        this.drawText(out,1,0);
+
+        out = "fuel:"+padNumber(storage.fuel,3);
+        out += " power:200%";
+        this.drawText(out,1,this.fontSize+2);
 
     }
 
@@ -434,9 +441,10 @@ class MainView {
             }
         }
 
-        let y = 90;
+        let y = 80;
         for (let i=0; i<out.length; i++) {
-            this.ctx.fillText(out[i],260,y+i*10);
+            this.drawText(out[i],257,y+i*this.fontSize);
+           // this.drawText(out[i],260,y+i*this.fontSize);
         }
     }
 
@@ -502,4 +510,35 @@ class MainView {
         this.ctx.fillRect(nx,ny+h-1,w,1);
         this.ctx.fillRect(nx+w-1,ny,1,h);
     }
+
+    drawText(message, startX, startY) {
+        let size = this.fontSize;
+        let index = 0;
+        let i = 0, j = 0;
+
+        message = message.toUpperCase();
+
+        let hasMessageEnded = false;
+        while (hasMessageEnded == false) {
+            if (message.charCodeAt(index) == 10) {
+                // newline character
+                j++;
+                i = 0;
+                index++;
+            }
+            let cha = message.charCodeAt(index) - 32; // ignore other control codes
+            let tx = cha % 16;
+            let ty = Math.floor(cha/16);
+
+            let x = i*size + startX;
+            let y = j*size + startY;
+            this.ctx.drawImage(this.fontImage, tx*size, ty*size, size, size,
+                                x, y, size, size);
+            i++;
+            index++;
+            if (index == message.length) hasMessageEnded = true;
+        }
+    }
+
+    
 }

@@ -25,3 +25,16 @@ class PseudorandomGenerator {
         return Math.floor(this.getNext()*max);
     }
 }
+
+function padNumber(number, span) {
+    let len = number.toString().length;
+    let paddingNeeded = span - len;
+    let result = "";
+
+    while (paddingNeeded>0) {
+        result += " ";
+        paddingNeeded--;
+    }
+    result += number;
+    return result;
+}

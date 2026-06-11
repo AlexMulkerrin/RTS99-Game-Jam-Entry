@@ -91,17 +91,17 @@ class Simulation {
 
             if (i == factionID.player) {
                 // player's faction
-                fac.storage.essence = 100;
+                fac.storage.essence = 50;
                 fac.storage.concrete = 50;
                 fac.storage.metal = 20;
-                fac.storage.fuel = 80;
+                fac.storage.fuel = 10;
                 this.generateAgents(i, PLAYER_FORCE_SIZE, "central");
 
             } else if (i == factionID.enemy) {
                 this.generateAgents(i, ENEMY_FORCE_SIZE, "central");
             }
             
-            this.updateFactionVision(i);
+            
         }
     }
 
@@ -443,6 +443,9 @@ class Simulation {
             if (isFree == false) {
                 this.deductResources("agent",type,faction);
             }
+
+            this.updateFactionVision(faction);
+
             return true
         } else {
             return false;
