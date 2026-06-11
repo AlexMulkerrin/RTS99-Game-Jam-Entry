@@ -60,7 +60,8 @@ class Control {
 
         this.button = [];
 
-        if (sim.gameState == gameStateID.inGame) {
+        if (sim.gameState == gameStateID.inGame 
+            || sim.gameState == gameStateID.gameOver ) {
             if (m.selectedType == entityTypeID.none) {
                 this.makeBuildButtons();
             } else if (m.selectedType == entityTypeID.structure) {
@@ -401,27 +402,31 @@ class Control {
         m.hoveredType = entityTypeID.none;
         m.hoveredIsEnemy = false;
 
+        let otherFact = NONE;
         if (t.hasStructure) {
             m.hoveredType = entityTypeID.structure;
             m.hoveredIndex = t.occupant;
+            otherFact = sim.structure[m.hoveredIndex].faction;
         } else if (t.hasAgent) {
             m.hoveredType = entityTypeID.agent;
             m.hoveredIndex = t.occupant;
+            otherFact = sim.agent[m.hoveredIndex].faction;
+        }
+        if (m.selectedType != entityTypeID.none) {
+            let ownFact;
 
-            if (m.selectedType != entityTypeID.none) {
-                let ownFact;
-                if (m.selectedType == entityTypeID.agent) {
-                    ownFact = sim.agent[m.selectedIndex].faction;
-                } else {
-                    // is structure
-                    ownFact = sim.agent[m.selectedIndex].faction;
-                }
-                let otherFact = sim.agent[m.hoveredIndex].faction;
-
-                if (ownFact != otherFact) {
-                    m.hoveredIsEnemy = true;
-                }
+            if (m.selectedType == entityTypeID.agent) {
+                ownFact = sim.agent[m.selectedIndex].faction;
+            } else {
+                // is structure
+                ownFact = sim.structure[m.selectedIndex].faction;
             }
+            
+
+            if (otherFact != NONE && ownFact != otherFact) {
+                m.hoveredIsEnemy = true;
+            }
+        
         }
     }
 
