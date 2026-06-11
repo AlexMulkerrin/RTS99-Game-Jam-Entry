@@ -2,12 +2,19 @@ const factionID = {neutral:0, player:1, enemy:2};
 
 const factionColours = ["#000000","#00ffb3","#ff0000"];
 
+const startingTradeValues = {
+    buy:{concrete:5, metal:10, fuel:20},
+    sell:{concrete:5, metal:10, fuel:20}
+}
+
 class Faction {
     constructor(inColour, inWidth, inHeight) {
         this.name = "robots";
         this.agentColour = inColour;
         this.structureColour = "#FF7775";
+        
         this.storage = new Storage();
+        this.tradeValues = new TradeValues();
 
         this.vision = new VisionMap(inWidth, inHeight);
 
@@ -27,6 +34,18 @@ class Storage {
         this.fuel = 0;
 
         this.maxQuantity = 999;
+    }
+}
+
+class TradeValues{
+    constructor() {
+        let start = startingTradeValues;
+        this.buy = {concrete:start.buy.concrete, 
+                    metal:start.buy.metal, 
+                    fuel:start.buy.fuel};
+        this.sell = {concrete:start.sell.concrete, 
+                    metal:start.sell.metal, 
+                    fuel:start.sell.fuel};
     }
 }
 

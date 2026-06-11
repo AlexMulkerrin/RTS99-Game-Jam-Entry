@@ -102,6 +102,26 @@ class Control {
             let agentType = stats.builds[0];
             let b = new Button(x,y,size,size, "robot", "build robot for 10 essence", "handleBuildUnit", agentID.robot);
             this.button.push(b);
+        } else if (stats.isTradeHub) {
+            let x =256;
+            let y = 80;
+            let size = 16;
+
+            this.button.push( new Button(x,y,size,size, "buy concrete", "buy 10 concrete for 5 essence", "handleTrade", ["buy","concrete"]));
+            x += size;
+            this.button.push( new Button(x,y,size,size, "sell concrete", "sell 10 concrete for 5 essence", "handleTrade", ["sell","concrete"]));
+            
+            x = 256;
+            y += size;
+            this.button.push( new Button(x,y,size,size, "buy metal", "buy 10 metal for 10 essence", "handleTrade", ["buy","metal"]));
+            x += size;
+            this.button.push( new Button(x,y,size,size, "sell metal", "sell 10 metal for 10 essence", "handleTrade", ["sell","metal"]));
+
+            x = 256;
+            y += size;
+            this.button.push( new Button(x,y,size,size, "buy fuel", "buy 10 fuel for 20 essence", "handleTrade", ["buy","fuel"]));
+            x += size;
+            this.button.push( new Button(x,y,size,size, "sell fuel", "sell 10 metal for 20 essence", "handleTrade", ["sell","fuel"]));
         }
 
         
@@ -344,6 +364,32 @@ class Control {
         let x = struc.x + stats.exit.x;
         let y = struc.y + stats.exit.y;
         sim.tryAddAgent(x,y, agentID.robot, f, false);
+    }
+
+    handleTrade(args) {
+        let type = args[0];
+        let resource = args[1];
+
+        let sim = this.targetSimulation;
+        let f = factionID.player;
+        let storage = sim.faction[f].storage;
+        let tradeValues = sim.faction[f].tradeValues;
+
+        if (type == "buy") {
+            let cost = tradeValues.buy[resource];
+            if (cost <= storage.essence) {
+                storage.essence -= cost;
+                storage[resource] += 10;
+            }
+
+        } else if (type == "sell") {
+            let value = tradeValues.sell[resource];
+            if (storage[resource] >= 10) {
+                storage[resource] -= 10;
+                storage.essence += value;
+            }
+
+        }
     }
 
     checkHover() {
