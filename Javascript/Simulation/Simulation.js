@@ -21,7 +21,7 @@ class Simulation {
 
         this.timer = 0;
         this.gameState = gameStateID.inGame;
-        this.hasFogOfWar = true;
+        this.hasFogOfWar = false;
         this.winState = winStateID.undecided;
 
         this.width = 64;
@@ -263,6 +263,14 @@ class Simulation {
             this.updateStructureVariations(struc.x,struc.y);
 
             this.deductResources("structure",type,faction);
+
+            // if portal set as home location for that faction
+            if (type == structureID.portal) {
+                let fact = this.faction[faction];
+                let strucIndex = this.structure.length-1;
+
+                fact.homeBase = strucIndex;
+            }
         }
     }
 
@@ -467,6 +475,18 @@ class Simulation {
         a.targID = targetIndex;
     }
 
+    sendDepositCommand(index) {
+        let a = this.agent[index];
+        let fact = this.faction[a.faction];
+
+        if (fact.homeBase != NONE) {
+            let home = this.structure[fact.homeBase];
+            a.targX = home.x;
+            a.targY = home.y;
+            a.state = stateID.depositResources;
+        }
+    }
+
     update() {
         this.timer++;
 
@@ -489,6 +509,8 @@ class Simulation {
                     this.handleAgentMovingToLocation(i);
                 } else if (a.state == stateID.attacking) {
                     this.handleAgentAttacking(i);
+                } else if (a.state == stateID.depositResources) {
+                    this.handleAgentDepositing(i);
                 }
                 
                 if (a.cooldown>0) a.cooldown--;
@@ -649,6 +671,91 @@ class Simulation {
             }
         } else {
             a.state = stateID.idle;
+        }
+    }
+
+    handleAgentDepositing(index) {
+        let a = this.agent[index];
+
+        if (a.movementAnimation == 0) {
+            a.newRotation = a.getDirectionToTarget();
+
+            if (a.rotation != a.newRotation) {
+                a.isTurning = true;
+                a.movementAnimation = agentTypes[a.type].turnDelay;
+                a.turningDirection = a.getTurnDirection();
+            } else {
+                let nx = a.x + direcDelta[a.rotation][0];
+                let ny = a.y + direcDelta[a.rotation][1];
+
+                
+                if (this.isInBounds(nx,ny)) {
+                    let homeIndex = this.faction[a.faction].homeBase;
+                    if (this.terrain[nx][ny].occupant == homeIndex) {
+                        this.handleDroppoff(index);
+                    } else if ( this.terrain[nx][ny].occupant == NONE
+                        && this.terrain[nx][ny].type != tileID.water) {
+                
+                        a.newX = nx;
+                        a.newY = ny;
+                        // not sure if this is a good idea, 
+                        // two tiles with the same occupant?
+                        this.terrain[a.newX][a.newY].hasAgent = true; 
+                        this.terrain[a.newX][a.newY].occupant = index;
+
+                        if (a.isMovingDiagonal()) {
+                            a.movementAnimation = 23;
+                        } else {
+                            a.movementAnimation = 16;
+                        }
+                    } else {
+                        // can't move here
+                        a.state = stateID.idle;
+                    }
+                } else {
+                    // can't move there
+                    a.state = stateID.idle;
+                }
+
+            }
+        } else {
+            a.movementAnimation--;
+
+            if (a.movementAnimation == 0) {
+                if (a.isTurning) {
+                    if (a.rotation == a.newRotation) {
+                        a.isTurning = false;
+                    } else {
+                        a.rotation = (a.rotation + a.turningDirection) % 8;
+                        if (a.rotation < 0) a.rotation += 8;
+                        a.movementAnimation = agentTypes[a.type].turnDelay;
+                    }
+                } else {
+                    this.handleAgentOnNewTile(index);
+
+                    if (a.x == a.targX && a.y == a.targY) {
+                        a.state = stateID.idle;
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    handleDroppoff(index) {
+        let a = this.agent[index];
+        let fact = this.faction[a.faction];
+        let storage = fact.storage;
+
+        for (let i=a.inventory.length-1; i>=0; i--) {
+            let item = a.inventory[i];
+            switch (item.type) {
+                case itemID.essence:
+                    let amount = item.quantity;
+                    storage.essence += amount;
+                    a.inventory.pop();
+            }
         }
     }
 

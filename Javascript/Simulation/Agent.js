@@ -3,7 +3,8 @@ const rotationID = { right:0, rightDown:1, down:2, leftDown:3, left:4,
 const direcDelta =[ [1,0],[1,1],[0,1],[-1,1],
 				    [-1,0],[-1,-1],[0,-1],[1,-1]];
 
-const stateID = {idle:0, wander:1, movingToLocation:2, attacking:3,}
+const stateID = {idle:0, wander:1, movingToLocation:2, attacking:3, 
+    depositResources:4,}
 
 const agentID = {robot:0, rover:1};
 

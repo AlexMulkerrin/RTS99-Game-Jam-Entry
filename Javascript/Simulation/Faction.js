@@ -12,6 +12,8 @@ class Faction {
         this.name = "robots";
         this.agentColour = inColour;
         this.structureColour = "#FF7775";
+
+        this.homeBase = NONE;
         
         this.storage = new Storage();
         this.tradeValues = new TradeValues();

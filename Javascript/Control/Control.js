@@ -287,6 +287,9 @@ class Control {
     }
 
     handleKeyDown(event) {
+        let sim = this.targetSimulation;
+        let m = this.mouse;
+
         let code = event.code;
 
         switch (code) {
@@ -302,7 +305,8 @@ class Control {
             case "KeyS":
                 this.moveCamera(0,1);
                 break;
-            
+            case "KeyE":
+                sim.sendDepositCommand(m.selectedIndex);
         }
     }
 
