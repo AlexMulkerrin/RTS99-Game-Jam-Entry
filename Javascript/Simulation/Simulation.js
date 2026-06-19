@@ -237,6 +237,8 @@ class Simulation {
         }
 
         if (isValid) {
+
+            let doesNotHaveConcrete = structureTypes[type].doesNotHaveConcrete;
             for (let i=0; i<struc.size; i++) {
                 for (let j=0; j<struc.size; j++) {
                     let nx = x + i;
@@ -246,7 +248,11 @@ class Simulation {
                     t.hasStructure = true;
                     t.occupant = this.structure.length;
 
-                    this.changeTile(nx,ny,tileID.concrete)
+                    if (doesNotHaveConcrete) {
+                        // no need to add concrete underneath
+                    } else {
+                        this.changeTile(nx,ny,tileID.concrete)
+                    }
                 }
             }
             // road connections 
