@@ -1,0 +1,19 @@
+Planning document for rts jam entry. A place where I can note down my thoughts about what to do for my entry.
+
+22nd June, start of week 3
+
+Things to look into:
+
+* pathfinding which takes into account other units and leads to nice formations.
+* multiselection which works with the pathfinding solution.
+* levelling up of portal to unlock next tier of buildings.
+* first economy building, the essence siphon, that accrues an income of essence.
+* functionality to allow units to collect resources from production buildings and bring them back to base.
+
+* Make a list of all the unit types to have in the game and write dummy data entries for them.
+* add mission select screen with option to play a random map.
+* make an intermediate state for fog of war for previously explored but currently not visible tiles.
+* Add terrain objects/structures like trees which can be interacted with. Should these be a seperate type than other structures? Possibly terrain tiles themselves.
+* add sound system so there can be feedback of actions performed by the player.
+
+I realize that is already a lot and there are many other things to add. It is important to have the perspective that these are options of things to work on and there is no time pressure on them. I'll implement what I manage to implement. Time span is until Sunday.
