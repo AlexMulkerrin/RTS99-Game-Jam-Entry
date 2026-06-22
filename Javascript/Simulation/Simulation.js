@@ -17,7 +17,7 @@ const PLAYER_FORCE_SIZE = 1;
 
 class Simulation {
     constructor() {
-        this.isDebugModeOn = false;
+        this.isDebugModeOn = true;
 
         this.timer = 0;
         this.gameState = gameStateID.inGame;
@@ -124,6 +124,21 @@ class Simulation {
                     let y = random(span)+offset;
 
                     isPlaced = this.tryAddAgent(x,y,agentID.MGunMech, faction);
+                    if (this.isDebugModeOn) {
+                        this.tryAddAgent(x+1,y,agentID.rocketMech, faction);
+                        this.tryAddAgent(x+2,y,agentID.MGunMech, faction);
+                        this.tryAddAgent(x+3,y,agentID.flamerMech, faction);
+
+                        this.tryAddAgent(x,y+1,agentID.rover, faction);
+                        this.tryAddAgent(x+1,y+1,agentID.transport, faction);
+                        this.tryAddAgent(x+2,y+1,agentID.harvester, faction);
+
+                        this.tryAddAgent(x,y+2,agentID.tank, faction);
+                        this.tryAddAgent(x+1,y+2,agentID.artillery, faction);
+                        this.tryAddAgent(x+2,y+2,agentID.antiAir, faction);
+                        this.tryAddAgent(x+3,y+2,agentID.HvyTank, faction);
+
+                    }
                 }
             }
         }
