@@ -113,7 +113,7 @@ class Simulation {
                     let x = random(this.width);
                     let y = random(this.height);
 
-                    isPlaced = this.tryAddAgent(x,y,agentID.robot, faction, true);
+                    isPlaced = this.tryAddAgent(x,y,agentID.MGunMech, faction, true);
                 }
                 
             } else if (mode == "central") {
@@ -123,7 +123,7 @@ class Simulation {
                     let x = random(span)+offset;
                     let y = random(span)+offset;
 
-                    isPlaced = this.tryAddAgent(x,y,agentID.robot, faction);
+                    isPlaced = this.tryAddAgent(x,y,agentID.MGunMech, faction);
                 }
             }
         }

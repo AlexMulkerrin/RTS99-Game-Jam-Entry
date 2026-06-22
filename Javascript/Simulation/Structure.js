@@ -16,7 +16,7 @@ const structureTypes = [
         doesNotHaveConcrete:true,
     },
     {name:"barracks Tier 0",size:2,tileIndex:0, invSlots:4, maxStack:20,
-        cost:{concrete:4, metal:5}, builds:[agentID.robot], exit:{x:0,y:2},
+        cost:{concrete:4, metal:5}, builds:[agentID.MGunMech], exit:{x:0,y:2},
         doesNotHaveConcrete:true,
     },
     {name:"portal Tier 1",size:3,tileIndex:1, invSlots:8, maxStack:200},
