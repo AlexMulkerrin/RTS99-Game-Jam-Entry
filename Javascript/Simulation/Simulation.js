@@ -1,7 +1,7 @@
 const gameStateID = {inGame:0, gameOver:1};
 const winStateID = {undecided:0, playerWon:1, enemyWon:2, draw:3};
 
-const tileID = {water:0, grass:1, concrete:2, road:3};
+const tileID = {water:0, grass:1, concrete:2, road:3, dirt:4};
 
 const itemID = {essence:0};
 
@@ -250,8 +250,9 @@ class Simulation {
 
                     if (doesNotHaveConcrete) {
                         // no need to add concrete underneath
+                        this.changeTile(nx,ny,tileID.dirt);
                     } else {
-                        this.changeTile(nx,ny,tileID.concrete)
+                        this.changeTile(nx,ny,tileID.concrete);
                     }
                 }
             }
