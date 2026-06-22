@@ -10,7 +10,7 @@ Things to look into:
 * first economy building, the essence siphon, that accrues an income of essence.
 * functionality to allow units to collect resources from production buildings and bring them back to base.
 
-* Make a list of all the unit types to have in the game and write dummy data entries for them.
+* Make a list of all the unit types to have in the game and write dummy data entries for them. DONE
 * add mission select screen with option to play a random map.
 * make an intermediate state for fog of war for previously explored but currently not visible tiles.
 * Add terrain objects/structures like trees which can be interacted with. Should these be a seperate type than other structures? Possibly terrain tiles themselves.

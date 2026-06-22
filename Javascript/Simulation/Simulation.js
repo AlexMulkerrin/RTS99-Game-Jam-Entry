@@ -126,8 +126,7 @@ class Simulation {
                     isPlaced = this.tryAddAgent(x,y,agentID.MGunMech, faction);
                     if (this.isDebugModeOn) {
                         this.tryAddAgent(x+1,y,agentID.rocketMech, faction);
-                        this.tryAddAgent(x+2,y,agentID.MGunMech, faction);
-                        this.tryAddAgent(x+3,y,agentID.flamerMech, faction);
+                        this.tryAddAgent(x+2,y,agentID.flamerMech, faction);
 
                         this.tryAddAgent(x,y+1,agentID.rover, faction);
                         this.tryAddAgent(x+1,y+1,agentID.transport, faction);

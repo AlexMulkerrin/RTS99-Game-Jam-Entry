@@ -49,6 +49,9 @@ class MainView {
         this.agentsImage = new Image();
         this.agentsImage.src = "Resources/Images/Agents.png";
 
+        this.turretsImage = new Image();
+        this.turretsImage.src = "Resources/Images/Turrets.png";
+
         this.cursorsImage = new Image();
         this.cursorsImage.src = "Resources/Images/Cursors.png";
 
@@ -257,6 +260,12 @@ class MainView {
                     }
 
                     this.drawAgent(x,y,a.type, a.rotation);
+                    let stats = agentTypes[a.type];
+                    if (stats.hasTurret) {
+                        let turretType = a.type-6;
+                        let turretRotation = a.rotation; // TODO make this independant
+                        this.drawAgentTurret(x,y,turretType,turretRotation);
+                    }
 
                     this.drawAgentHealthBar(x,y,a);
 
@@ -277,6 +286,17 @@ class MainView {
             tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
             x, y, sqSize, sqSize);
     }
+    drawAgentTurret(x,y,type,rotation) {
+        let sqSize = this.sqSize;
+
+        let tx = rotation;
+        let ty = type;
+        
+        this.ctx.drawImage(this.turretsImage, 
+            tx*(sqSize+1), ty*(sqSize+1), sqSize, sqSize,
+            x, y, sqSize, sqSize);
+    }
+
     drawAgentHealthBar(x,y,a) {
         let span = this.sqSize-2;
 
