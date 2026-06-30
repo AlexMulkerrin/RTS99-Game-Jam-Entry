@@ -17,3 +17,7 @@ Things to look into:
 * add sound system so there can be feedback of actions performed by the player.
 
 I realize that is already a lot and there are many other things to add. It is important to have the perspective that these are options of things to work on and there is no time pressure on them. I'll implement what I manage to implement. Time span is until Sunday.
+
+30th June, week 4
+
+Well I did get a bit done last week but was occupied with other things coming up. They are over now so I'm thinking I might try to continue with the list from last time but also look at doing some big, exciting experiments like multiplayer.
